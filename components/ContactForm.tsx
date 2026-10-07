@@ -41,7 +41,7 @@ export function ContactForm() {
   }
 
   return (
-    <form className="contact-form" onSubmit={onSubmit}>
+    <form className="contact-form" onSubmit={onSubmit} data-reveal="up">
       <label>
         <span>שם</span>
         <input name="name" required maxLength={200} autoComplete="name" />
@@ -55,7 +55,7 @@ export function ContactForm() {
         <textarea name="message" required maxLength={5000} rows={4} />
       </label>
       <div className="full form-actions">
-        <button type="submit" disabled={status === "sending"}>
+        <button type="submit" className="btn btn-primary" disabled={status === "sending"}>
           {status === "sending" ? "שולח..." : "שליחה"}
         </button>
         {status === "error" && <span className="form-error">משהו לא עבד. אפשר לנסות שוב או לשלוח מייל.</span>}

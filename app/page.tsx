@@ -1,139 +1,65 @@
-import Link from "next/link";
-import { about, digital, names, site, works } from "@/content/site";
-import { Header } from "@/components/Header";
-import { MediaBlock } from "@/components/MediaBlock";
+import { about, winks, works } from "@/content/site";
+import { PageTransition } from "@/components/PageTransition";
+import { Hero } from "@/components/Hero";
+import { SectionHead } from "@/components/SectionHead";
+import { Wink } from "@/components/Wink";
+import { WorkGrid } from "@/components/WorkGrid";
+import { DigitalGrid } from "@/components/DigitalGrid";
+import { NamingStage } from "@/components/NamingStage";
+import { WordReveal } from "@/components/WordReveal";
 import { Contact } from "@/components/Contact";
-
-const pad = (n: number) => String(n).padStart(2, "0");
 
 export default function Home() {
   return (
-    <>
-      <Header />
-      <main>
-        <section className="hero wrap">
-          <h1 className="hero-name latin">
-            Natan
-            <br />
-            Kosovsky
-          </h1>
-          <div className="hero-bottom">
-            <p className="hero-line">
-              {site.intro.before} <span className="struck">{site.intro.struck}</span>{" "}
-              {site.intro.after}
-            </p>
-            <p className="hero-role latin">{site.role}</p>
-          </div>
+    <PageTransition>
+      <main id="main">
+        <Hero />
+
+        <section id="work" className="section wrap" aria-label="Selected Work">
+          <SectionHead index="01" title="SELECTED WORK">
+            <Wink idle={winks.works.idle} reveal={winks.works.reveal} />
+          </SectionHead>
+          <WorkGrid />
+          <p className="section-count latin" aria-hidden="true">
+            {String(works.length).padStart(2, "0")} / {String(works.length).padStart(2, "0")}
+          </p>
         </section>
 
-        <section id="work" className="section wrap">
-          <div className="section-head">
-            <h2 className="section-title">Selected Work</h2>
-          </div>
-          <div className="works">
-            {works.map((w, i) => {
-              const text = (
-                <div className="work-text">
-                  <span className="work-index">{pad(i + 1)}</span>
-                  <h3 className="work-title">{w.title}</h3>
-                  <p className="work-sub">{w.subtitle}</p>
-                  <p className="work-summary">{w.summary}</p>
-                  <p className="work-meta">
-                    {w.client}
-                    {w.year && ` · ${w.year}`}
-                  </p>
-                  {w.type === "case" && <span className="work-link">לקייס המלא ←</span>}
-                </div>
-              );
-              return w.type === "case" ? (
-                <Link key={w.slug} href={`/work/${w.slug}`} className="work">
-                  {text}
-                  <MediaBlock media={w.cover} />
-                </Link>
-              ) : (
-                <article key={w.slug} className="work is-idea">
-                  {text}
-                  <MediaBlock media={w.cover} />
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
-        <section id="digital" className="section wrap">
-          <div className="section-head">
-            <h2 className="section-title">Digital / Ideas</h2>
+        <section id="digital" className="section wrap" aria-label="Digital / Ideas">
+          <SectionHead index="02" title="DIGITAL / IDEAS">
             <p className="section-note">לא פוסטים. החשיבה שמאחוריהם.</p>
-          </div>
-          <div className="digital">
-            {digital.map((d, i) => (
-              <article key={i} className="d-item">
-                <div className="d-client">
-                  {d.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={d.logo} alt={d.client} />
-                  ) : (
-                    d.client
-                  )}
-                </div>
-                <h3 className="d-title">{d.title}</h3>
-                <dl className="d-steps">
-                  <div>
-                    <dt>בעיה</dt>
-                    <dd>{d.problem}</dd>
-                  </div>
-                  <div>
-                    <dt>רעיון</dt>
-                    <dd>{d.idea}</dd>
-                  </div>
-                  <div>
-                    <dt>ביצוע</dt>
-                    <dd>{d.execution}</dd>
-                  </div>
-                </dl>
-                {d.media && <MediaBlock media={d.media} />}
-              </article>
-            ))}
-          </div>
+          </SectionHead>
+          <DigitalGrid />
         </section>
 
-        <section id="naming" className="section wrap">
-          <div className="section-head">
-            <h2 className="section-title">Naming</h2>
-          </div>
-          <ul className="names">
-            {names.map((n, i) => (
-              <li key={i} className="name-row">
-                <span className="name-word">{n.name}</span>
-                <span className="name-what">{n.what}</span>
-                <span className="name-note">{n.note}</span>
-              </li>
-            ))}
-          </ul>
+        <section id="naming" className="section wrap" aria-label="Naming">
+          <SectionHead index="03" title="NAMING">
+            <p className="section-note">שם טוב עושה חצי מהעבודה.</p>
+          </SectionHead>
+          <NamingStage />
         </section>
 
-        <section id="about" className="section wrap">
-          <div className="section-head">
-            <h2 className="section-title">About</h2>
-          </div>
+        <section id="about" className="section wrap" aria-label="אודות">
+          <SectionHead index="04" title="ABOUT" />
           <div className="about">
-            <p className="about-lead">{about.lead}</p>
-            <div>
+            <WordReveal text={about.statement} />
+            <div className="about-side" data-reveal="up">
+              <h3 className="about-title">{about.title}</h3>
               <div className="about-body">
                 {about.body.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
-              <div className="clients">
+              <ul className="clients" aria-label="לקוחות">
                 {about.clients.map((c, i) => (
-                  <span key={i}>{c}</span>
+                  <li key={i}>{c}</li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </section>
       </main>
       <Contact />
-    </>
+    </PageTransition>
   );
 }

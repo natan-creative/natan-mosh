@@ -3,10 +3,18 @@
 Next.js, עברית RTL. כל התוכן נמצא בקובץ אחד: `content/site.ts`.
 
 ## עדכון תוכן
-- טקסטים: `content/site.ts` (כל מה שבסוגריים מרובעים `[...]` מחכה לתוכן)
-- תמונות עבודות: `public/work/` ← ובקובץ התוכן: `{ kind: "image", src: "/work/file.jpg", alt: "..." }`
-- לוגואים: `public/logos/` ← ובכרטיס הדיגיטל: `logo: "/logos/client.svg"`
-- וידאו מיוטיוב/וימאו: `{ kind: "embed", src: "https://player.vimeo.com/video/..." }`
+הכל ב-`content/site.ts`. כל מה שבסוגריים מרובעים `[...]` מחכה לתוכן.
+
+- **עבודות (Selected Work):** כל עבודה היא אובייקט. `type: "case"` מקבלת Case Study מלא
+  (Brief / Challenge / Idea / Execution / Result), `type: "idea"` מקבלת עמוד קצר.
+  `layout` קובע את המקום בגריד (`major` / `side` / `mid` / `small`), `ratio` את יחס התמונה,
+  `accent` את צבע הפרויקט.
+- **תמונות:** לשים ב-`public/work/` ולהפנות: `img("file-name", "תיאור לנגישות")`.
+  next/image דואג ל-AVIF/WebP ולגדלים.
+- **לוגואים:** `public/logos/` ← בכרטיס דיגיטל: `face: "logo", logo: "/logos/client.svg"`.
+- **וידאו:** `{ kind: "embed", src: "https://player.vimeo.com/video/..." }`.
+- **Hero:** `hero.line` (החלק ב-`struck` נמחק בקו אדום), חלופות בהערה.
+- **קריצות:** `winks`. לא יותר משלוש.
 
 ## הרצה מקומית
 ```
