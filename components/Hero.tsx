@@ -10,7 +10,8 @@ export function Hero() {
         )}
       </div>
 
-      <p className="hero-note" aria-label={hero.note.join(" ")}>
+      <p className="hero-note">
+        <span className="sr-only">{hero.note.join(" ")}</span>
         {hero.note.map((l, i) => (
           <span key={i} aria-hidden="true" style={{ ["--i" as string]: i }}>
             {l}

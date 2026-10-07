@@ -70,7 +70,12 @@ export const site = {
   short: "NK",
   role: "Creative Director / Copywriter",
   email: "[natan@email.com]",
-  phone: "[050-0000000]",
+  phone: "054-476-6060",
+  phoneIntl: "+972544766060",
+  whatsapp: {
+    number: "972544766060",
+    message: "היי נתן, הגעתי מהאתר שלך",
+  },
   linkedin: "[https://linkedin.com/in/...]",
   instagram: "[https://instagram.com/...]",
 };

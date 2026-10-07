@@ -1,5 +1,6 @@
 "use client";
 
+import { reducedMotion } from "@/lib/a11y";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -14,7 +15,7 @@ export function Reveal() {
     else document.documentElement.classList.remove("first-load");
 
     const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-in)"));
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    if (reducedMotion() || !("IntersectionObserver" in window)) {
       els.forEach((el) => el.classList.add("is-in"));
       return;
     }

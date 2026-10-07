@@ -1,5 +1,6 @@
 "use client";
 
+import { reducedMotion } from "@/lib/a11y";
 import { useEffect, useRef } from "react";
 
 // parallax עדין מאוד. כבוי במובייל וב-reduced motion.
@@ -9,12 +10,16 @@ export function Parallax({ children, strength = 0.08 }: { children: React.ReactN
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(min-width: 768px)").matches) return;
+    if (reducedMotion() || !matchMedia("(min-width: 768px)").matches) return;
     let raf = 0;
     const update = () => {
       raf = 0;
       const r = el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) return;
+      if (reducedMotion()) {
+        el.style.transform = "";
+        return;
+      }
       el.style.transform = `translate3d(0, ${(r.top * -strength).toFixed(1)}px, 0) scale(1.06)`;
     };
     const onScroll = () => {

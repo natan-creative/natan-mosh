@@ -1,5 +1,6 @@
 "use client";
 
+import { reducedMotion } from "@/lib/a11y";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -18,12 +19,13 @@ export function Cursor() {
 
   useEffect(() => {
     if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    
     let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
 
     const tick = () => {
-      cx += (x - cx) * (reduce ? 1 : 0.22);
-      cy += (y - cy) * (reduce ? 1 : 0.22);
+      const k = reducedMotion() ? 1 : 0.22;
+      cx += (x - cx) * k;
+      cy += (y - cy) * k;
       if (ref.current) ref.current.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
       raf = Math.abs(x - cx) + Math.abs(y - cy) > 0.3 ? requestAnimationFrame(tick) : 0;
     };
@@ -31,7 +33,10 @@ export function Cursor() {
     const onMove = (e: PointerEvent) => {
       x = e.clientX;
       y = e.clientY;
-      const t = (e.target as Element | null)?.closest?.("[data-cursor]");
+      // סמן גדול מתפריט הנגישות: לא מסתירים את סמן המערכת
+      const t = document.documentElement.classList.contains("a11y-cursor")
+        ? null
+        : (e.target as Element | null)?.closest?.("[data-cursor]");
       setLabel(t ? t.getAttribute("data-cursor") : null);
       if (!raf) raf = requestAnimationFrame(tick);
     };

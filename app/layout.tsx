@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { Loader } from "@/components/Loader";
 import { Cursor } from "@/components/Cursor";
 import { Reveal } from "@/components/Reveal";
+import { WhatsApp } from "@/components/WhatsApp";
+import { A11yMenu } from "@/components/A11yMenu";
 import "./globals.css";
 
 // כותרות באנגלית: condensed, חזק
@@ -26,8 +28,9 @@ export const metadata: Metadata = {
   description: "תיק עבודות: רעיונות, קונספט וקופי.",
 };
 
-// רץ לפני הציור הראשון: מסמן שיש JS, ומחליט אם להציג את מסך הפתיחה (פעם אחת לסשן).
-const boot = `(function(){var d=document.documentElement;d.classList.add("js","first-load");try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("nk-intro")){d.classList.add("intro");sessionStorage.setItem("nk-intro","1")}}catch(e){}})();`;
+// רץ לפני הציור הראשון: מסמן שיש JS, מחיל את הגדרות הנגישות השמורות,
+// ומחליט אם להציג את מסך הפתיחה (פעם אחת לסשן, לא כשמבקשים פחות תנועה).
+const boot = `(function(){var d=document.documentElement;d.classList.add("js","first-load");try{var a=JSON.parse(localStorage.getItem("nk-a11y")||"{}");if(a.zoom)d.classList.add("a11y-zoom-"+a.zoom);["contrast","mono","links","font","still","cursor"].forEach(function(k){if(a[k])d.classList.add("a11y-"+k)});if(!a.still&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("nk-intro")){d.classList.add("intro");sessionStorage.setItem("nk-intro","1")}}catch(e){}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -49,6 +52,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Cursor />
         <Reveal />
+        <aside aria-label="פעולות מהירות">
+          <WhatsApp />
+          <A11yMenu />
+        </aside>
       </body>
     </html>
   );

@@ -53,7 +53,7 @@ export function AboutContact() {
                 </a>
               )}
               {site.phone && (
-                <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} className="ac-phone latin">
+                <a href={`tel:${site.phoneIntl}`} className="ac-phone latin">
                   {site.phone}
                 </a>
               )}
@@ -74,6 +74,7 @@ export function AboutContact() {
             <Link href="/#work" transitionTypes={["nav-back"]}>עבודות</Link>
             <Link href="/#about" transitionTypes={["nav-back"]}>אודות</Link>
             <Link href="/#contact" transitionTypes={["nav-back"]}>צור קשר</Link>
+            <Link href="/accessibility">הצהרת נגישות</Link>
           </nav>
         </footer>
       </div>
