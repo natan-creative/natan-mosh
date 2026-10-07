@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { requireAdmin } from "@/lib/auth";
-import { BACKEND } from "@/lib/env";
+import { AUTH_DISABLED, BACKEND } from "@/lib/env";
 import { builtinMedia, getDraftContent, getPublishedContent, store } from "@/lib/store";
 import { StudioProvider } from "@/components/admin/StudioContext";
 import { StudioShell } from "@/components/admin/StudioShell";
@@ -13,7 +13,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
   return (
     <ConfirmProvider>
       <StudioProvider initialDraft={draft} initialPublished={published} initialMedia={[...media, ...builtinMedia]} backend={BACKEND}>
-        <StudioShell email={admin.email}>{children}</StudioShell>
+        <StudioShell email={admin.email} authDisabled={AUTH_DISABLED}>{children}</StudioShell>
       </StudioProvider>
     </ConfirmProvider>
   );

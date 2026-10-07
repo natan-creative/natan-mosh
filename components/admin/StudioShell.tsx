@@ -156,7 +156,7 @@ function PreviewPane() {
   );
 }
 
-export function StudioShell({ children, email }: { children: React.ReactNode; email: string }) {
+export function StudioShell({ children, email, authDisabled }: { children: React.ReactNode; email: string; authDisabled?: boolean }) {
   const s = useStudio();
   const pathname = usePathname();
   const [menu, setMenu] = useState(false);
@@ -181,6 +181,11 @@ export function StudioShell({ children, email }: { children: React.ReactNode; em
             הסטודיו
           </Link>
           <SaveStatus />
+          {authDisabled && (
+            <span className="ad-status is-test" title="נשמר בקבצים מקומיים, לא ב-Supabase. כבוי אוטומטית ב-Vercel.">
+              מצב בדיקה · בלי סיסמה
+            </span>
+          )}
         </div>
         <div className="ad-top-end">
           <div className="ad-group" role="group" aria-label="ביטול וחזרה">
@@ -225,11 +230,13 @@ export function StudioShell({ children, email }: { children: React.ReactNode; em
           <a href="/" target="_blank" rel="noreferrer" className="ad-nav-link">
             לאתר החי ↗
           </a>
-          <form action={logout}>
-            <button type="submit" className="ad-nav-link">
-              יציאה {s.backend === "local" ? "(מצב פיתוח)" : ""}
-            </button>
-          </form>
+          {!authDisabled && (
+            <form action={logout}>
+              <button type="submit" className="ad-nav-link">
+                יציאה {s.backend === "local" ? "(מצב פיתוח)" : ""}
+              </button>
+            </form>
+          )}
           <p className="ad-hint" dir="ltr">
             {email}
           </p>

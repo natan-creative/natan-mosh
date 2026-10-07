@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { BACKEND, LOCAL_ADMIN_ALLOWED } from "@/lib/env";
+import { AUTH_DISABLED, BACKEND, LOCAL_ADMIN_ALLOWED } from "@/lib/env";
 import { supabaseServer } from "@/lib/supabase/server";
 
 export type Admin = { id: string; email: string };
@@ -23,6 +23,7 @@ export function safeEqual(a: string, b: string) {
 }
 
 export async function getAdmin(): Promise<Admin | null> {
+  if (AUTH_DISABLED) return { id: "local", email: "מצב בדיקה" };
   if (BACKEND === "supabase") {
     const sb = await supabaseServer();
     const { data } = await sb.auth.getUser();

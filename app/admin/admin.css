@@ -185,6 +185,12 @@
   background: var(--a-bg);
 }
 
+.ad-status.is-test {
+  background: #fff1c2;
+  color: #5c4300;
+  font-weight: 600;
+}
+
 .ad-status.is-error {
   color: var(--a-danger);
   background: #fde8e6;
