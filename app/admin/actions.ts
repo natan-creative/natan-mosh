@@ -26,14 +26,22 @@ async function run<T>(fn: () => Promise<T>): Promise<Result<T>> {
 // ---------- Auth ----------
 
 export async function login(_: unknown, form: FormData): Promise<{ error: string } | undefined> {
-  const email = String(form.get("email") ?? "");
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("password") ?? "");
 
   if (BACKEND === "supabase") {
     const sb = await supabaseServer();
     const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) return { error: "המייל או הסיסמה לא נכונים." };
+    if (error) {
+      console.warn("[admin] login failed:", error.code ?? error.message);
+      if (error.code === "email_not_confirmed")
+        return { error: "המשתמש עוד לא אושר. ב-Supabase: Authentication → Users → לבחור את המשתמש → Confirm email." };
+      if (error.code === "invalid_credentials") return { error: "המייל או הסיסמה לא נכונים." };
+      if (error.code === "over_request_rate_limit" || error.status === 429) return { error: "יותר מדי ניסיונות. כדאי לחכות דקה ולנסות שוב." };
+      return { error: `הכניסה נכשלה (${error.code ?? "שגיאה"}).` };
+    }
     if (!(await getAdmin())) {
+      console.warn("[admin] login ok but user is not in admins table");
       await sb.auth.signOut();
       return { error: "למשתמש הזה אין הרשאת עריכה." };
     }
