@@ -1,36 +1,60 @@
-# Natan Kosovsky — Portfolio
+# Natan Kosovsky — Portfolio + Studio
 
-Next.js, עברית RTL. כל התוכן נמצא בקובץ אחד: `content/site.ts`.
+אתר פורטפוליו (Next.js 16, עברית RTL) עם מערכת ניהול מובנית ב-`/admin`.
 
-## עדכון תוכן
-הכל ב-`content/site.ts`. כל מה שבסוגריים מרובעים `[...]` מחכה לתוכן.
+## איך זה בנוי
 
-- **עבודות (Selected Work):** כל עבודה היא אובייקט. `type: "case"` מקבלת Case Study מלא
-  (Brief / Challenge / Idea / Execution / Result), `type: "idea"` מקבלת עמוד קצר.
-  `kind` הוא מה שמופיע מתחת לכרטיס (קמפיין / קונספט), `focus` קובע איזה חלק מהתמונה
-  נשאר בחיתוך לכרטיס, `accent` הוא צבע הפרויקט בעמוד ה-Case.
-- **תמונות:** לשים ב-`public/work/` ולהפנות: `img("file-name", "תיאור לנגישות")`.
-  next/image דואג ל-AVIF/WebP ולגדלים.
-- **לוגואים:** `public/logos/` ← בכרטיס דיגיטל: `face: "logo", logo: "/logos/client.svg"`.
-- **וידאו:** `{ kind: "embed", src: "https://player.vimeo.com/video/..." }`.
-- **Hero:** `hero.headline` (הכותרת באנגלית), `hero.note` (הפתק בכתב יד), `hero.image`.
-- **Naming:** כל שם מקבל `style` שקובע איך ה-wordmark נראה (`black` / `heavy` / `serif` / `spaced` / `wide`).
-  ארבעה ראשונים מוצגים, השאר נפתחים ב"לכל השמות".
-- **קריצות:** `winks`. לא יותר משלוש.
+- **התוכן הוא מסמך אחד מובנה** (`lib/content/types.ts`): טקסטים, עבודות, מדיה, צבעים, טיפוגרפיה ותנועה.
+  יש שתי גרסאות: `draft` (מה שעורכים) ו-`published` (מה שהאתר מציג).
+- **Guardrails** (`lib/content/limits.ts`, `normalize.ts`): כל ערך ויזואלי מוגבל לטווח מותר, כך שאי אפשר לשבור את העיצוב.
+- **Design tokens** (`lib/theme.ts`): צבעים וטיפוגרפיה הופכים ל-CSS variables. ה-CSS של האתר קורא רק אותם.
+- **האתר הציבורי** (`app/(site)`) קורא רק את `published`, דרך cache שמתרענן בכל Publish.
+- **ה-Studio** (`app/admin`, `components/admin`): עורכים, Live Preview (האתר האמיתי ב-iframe שמקבל את הטיוטה ב-postMessage),
+  autosave, undo/redo, ספריית מדיה, היסטוריית גרסאות.
+- **מקור נתונים**: Supabase (DB + Auth + Storage). בלי Supabase, בפיתוח בלבד, הכל נשמר בקבצים בתיקיית `.data`.
 
-## הרצה מקומית
+## חיבור Supabase (פעם אחת)
+
+1. **טבלאות והרשאות:** Supabase → SQL Editor → להדביק את `supabase/schema.sql` → Run.
+2. **משתמש לנתן:** Authentication → Users → Add user (מייל + סיסמה).
+3. **להפוך אותו לעורך:** להריץ ב-SQL Editor (עם המייל שלו):
+   ```sql
+   insert into public.admins (user_id) select id from auth.users where email = 'natan@example.com';
+   ```
+4. **לסגור הרשמה חופשית:** Authentication → Sign In / Providers → לכבות "Allow new users to sign up".
+   (גם אם מישהו נרשם, אין לו גישה, אבל אין סיבה להשאיר את זה פתוח.)
+5. **משתני סביבה** (ב-`.env.local` לפיתוח, וב-Vercel → Settings → Environment Variables):
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://gpztqmtstepqpxwafwnr.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...   (Project Settings → API → anon public)
+   ```
+   **לא** להכניס את ה-service_role key לשום מקום באתר.
+
+בפעם הראשונה האתר מציג את תוכן ברירת המחדל (`lib/content/defaults.ts`). הפרסום הראשון מה-Studio שומר אותו ב-Supabase.
+
+## פיתוח מקומי
+
 ```
 npm install
 npm run dev
 ```
 
-## Supabase (טופס יצירת קשר)
-1. להריץ את `supabase/schema.sql` ב-SQL Editor של הפרויקט.
-2. להעתיק את `.env.example` ל-`.env.local` ולמלא את ה-anon key (Project Settings → API).
-3. ב-Vercel: Settings → Environment Variables, להוסיף את אותם שני משתנים.
+בלי Supabase: להוסיף ל-`.env.local` שורה `ADMIN_DEV_PASSWORD=...` ולהיכנס ל-`/admin` עם הסיסמה הזו.
+הנתונים נשמרים ב-`.data/` וההעלאות ב-`public/uploads/` (שתיהן לא נכנסות ל-git). מצב זה כבוי בפרודקשן.
 
-בלי המשתנים האלה הטופס פשוט לא מוצג, ונשאר קישור מייל.
-ההודעות מופיעות ב-Supabase: Table Editor → `contact_messages`.
+## אבטחה
 
-## Deploy
-Vercel מחובר ל-repo, כל push ל-`main` מעלה גרסה חדשה.
+- `/admin` ו-`/preview` בודקים הרשאה בשרת לפני כל דבר. כל פעולת כתיבה בודקת שוב, וב-Supabase גם RLS מאשר רק admins.
+- הטיוטה לא נגישה לציבור: ה-RLS מאפשר לקרוא רק את `published`.
+- `/admin` לא נטען בתוך אתרים אחרים, ו-`/preview` רק בתוך ה-Studio עצמו. שניהם `noindex`.
+- העלאות: תמונות (JPG, PNG, WebP, AVIF, GIF) עד 15MB וסרטונים (MP4, WebM) עד 50MB. בלי SVG.
+
+## הוספת סוג תוכן חדש בעתיד (Blog, Testimonials...)
+
+1. טיפוס ב-`lib/content/types.ts` + ערך התחלתי ב-`defaults.ts`.
+2. תצוגה ב-`components/site/views.tsx` (ו-`SectionId` אם זה אזור בדף הבית).
+3. עורך חדש ב-`app/admin/(studio)/<name>/page.tsx` + קישור ב-`StudioShell.tsx`.
+
+## נגישות
+
+הצהרת הנגישות ב-`/accessibility` (תקנות שוויון זכויות + ת"י 5568 / WCAG 2.0 AA). לעדכן את התאריך בכל שינוי משמעותי.

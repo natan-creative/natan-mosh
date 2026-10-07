@@ -1,0 +1,213 @@
+"use client";
+
+import { useId, useRef, useState } from "react";
+import { ZOOM } from "@/lib/content/limits";
+import { refFromAsset } from "@/lib/content/media-usage";
+import type { MediaKind, MediaRef } from "@/lib/content/types";
+import { MediaLibrary, Thumb, useUploader } from "./MediaLibrary";
+import { Button, Modal, Segmented, Slider, TextInput, Toggle } from "./ui";
+
+/** נקודת פוקוס: גוררים את הנקודה (או חיצים במקלדת) */
+export function FocalPicker({ media, value, onChange, ratio }: { media: MediaRef; value: { x: number; y: number }; onChange: (v: { x: number; y: number }) => void; ratio?: string }) {
+  const box = useRef<HTMLDivElement>(null);
+  const [drag, setDrag] = useState(false);
+  const set = (e: React.PointerEvent) => {
+    const r = box.current!.getBoundingClientRect();
+    onChange({
+      x: Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100))),
+      y: Math.round(Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100))),
+    });
+  };
+  return (
+    <div className="ad-focal-wrap">
+      <div
+        ref={box}
+        className="ad-focal"
+        onPointerDown={(e) => {
+          (e.target as HTMLElement).setPointerCapture(e.pointerId);
+          setDrag(true);
+          set(e);
+        }}
+        onPointerMove={(e) => drag && set(e)}
+        onPointerUp={() => setDrag(false)}
+      >
+        <Thumb asset={{ kind: media.kind, src: media.poster && media.kind === "video" ? media.poster : media.src, name: "" }} />
+        <button
+          type="button"
+          className="ad-focal-dot"
+          style={{ left: `${value.x}%`, top: `${value.y}%` }}
+          aria-label={`נקודת פוקוס: ${value.x}% מהשמאל, ${value.y}% מלמעלה. חיצים להזזה`}
+          onKeyDown={(e) => {
+            const step = e.shiftKey ? 10 : 2;
+            const map: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+            const d = map[e.key];
+            if (!d) return;
+            e.preventDefault();
+            onChange({ x: Math.min(100, Math.max(0, value.x + d[0])), y: Math.min(100, Math.max(0, value.y + d[1])) });
+          }}
+        />
+      </div>
+      {ratio && (
+        <div className="ad-focal-result">
+          <span className="ad-hint">כך זה ייחתך:</span>
+          <div className="ad-crop-preview" style={{ aspectRatio: ratio.replace("/", " / ") }}>
+            <Thumb
+              asset={{ kind: media.kind, src: media.poster && media.kind === "video" ? media.poster : media.src, name: "" }}
+              style={{
+                objectFit: media.fit === "contain" || media.fit === "original" ? "contain" : "cover",
+                objectPosition: `${value.x}% ${value.y}%`,
+                transform: `scale(${media.zoom ?? 1})`,
+                transformOrigin: `${value.x}% ${value.y}%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PosterPicker({ value, onChange }: { value?: string; onChange: (src?: string) => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="ad-field">
+      <span className="ad-label">תמונת פתיחה לווידאו</span>
+      <p className="ad-hint">מוצגת עד שהסרטון נטען, ובמקום הסרטון כשמבקשים פחות תנועה.</p>
+      <div className="ad-media-row">
+        {value && (
+          <span className="ad-media-thumb">
+            <Thumb asset={{ kind: "image", src: value, name: "" }} />
+          </span>
+        )}
+        <Button onClick={() => setOpen(true)}>{value ? "החלפה" : "בחירת תמונה"}</Button>
+        {value && (
+          <Button variant="ghost" onClick={() => onChange(undefined)}>
+            הסרה
+          </Button>
+        )}
+      </div>
+      <Modal open={open} onClose={() => setOpen(false)} title="בחירת תמונת פתיחה" wide>
+        <MediaLibrary
+          kind="image"
+          onSelect={(a) => {
+            onChange(a.src);
+            setOpen(false);
+          }}
+        />
+      </Modal>
+    </div>
+  );
+}
+
+/** עריכת אופן ההצגה של מדיה במקום מסוים */
+export function MediaRefEditor({ value, onChange, ratio }: { value: MediaRef; onChange: (m: MediaRef) => void; ratio?: string }) {
+  const set = (patch: Partial<MediaRef>) => onChange({ ...value, ...patch });
+  return (
+    <div className="ad-ref-editor">
+      <FocalPicker media={value} value={value.focal ?? { x: 50, y: 50 }} onChange={(focal) => set({ focal })} ratio={ratio} />
+      <div className="ad-ref-fields">
+        <Slider label="זום (חיתוך)" hint="מגדיל את התמונה סביב נקודת הפוקוס" min={ZOOM.min} max={ZOOM.max} step={ZOOM.step} value={value.zoom ?? 1} onChange={(zoom) => set({ zoom })} format={(v) => `${Math.round(v * 100)}%`} />
+        <Segmented
+          label="התאמה למסגרת"
+          value={value.fit ?? "cover"}
+          onChange={(fit) => set({ fit })}
+          options={[
+            { value: "cover", label: "ממלא (חותך)" },
+            { value: "contain", label: "נכנס כולו" },
+            { value: "original", label: "מקורי" },
+          ]}
+        />
+        <TextInput label="תיאור לנגישות" hint="מה רואים? קורא מסך יקריא את זה. חובה לפי התקן." value={value.alt} onChange={(alt) => set({ alt })} />
+        <TextInput label="כיתוב" hint="מופיע מתחת לתמונה בגלריה (לא חובה)" value={value.caption ?? ""} onChange={(caption) => set({ caption })} />
+        {value.kind === "video" && (
+          <>
+            <Toggle label="הפעל אוטומטית" hint="מתנגן בלי קול כשהוא מגיע למסך" checked={value.autoplay ?? true} onChange={(autoplay) => set({ autoplay, muted: autoplay ? true : value.muted })} />
+            <Toggle label="בלופ" checked={value.loop ?? true} onChange={(loop) => set({ loop })} />
+            <Toggle label="מושתק" checked={value.muted ?? true} onChange={(muted) => set({ muted })} />
+            <Toggle label="כפתורי נגן" checked={value.controls ?? false} onChange={(controls) => set({ controls })} />
+            <PosterPicker value={value.poster} onChange={(poster) => set({ poster })} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type Props = {
+  label: string;
+  hint?: string;
+  value: MediaRef | null;
+  onChange: (m: MediaRef | null) => void;
+  kind?: MediaKind;
+  /** היחס שבו המדיה מוצגת באתר: לתצוגת החיתוך */
+  ratio?: string;
+};
+
+export function MediaField({ label, hint, value, onChange, kind, ratio }: Props) {
+  const id = useId();
+  const [picking, setPicking] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const { upload, busy, errors } = useUploader();
+  const input = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="ad-field is-wide ad-media-field" role="group" aria-labelledby={id}>
+      <span className="ad-label" id={id}>
+        {label}
+      </span>
+      {hint && <p className="ad-hint">{hint}</p>}
+      <div className="ad-media-row">
+        <button type="button" className="ad-media-thumb" onClick={() => (value ? setEditing(true) : setPicking(true))} aria-label={value ? `עריכת ${label}` : `בחירת ${label}`}>
+          {value ? <Thumb asset={{ kind: value.kind, src: value.kind === "video" && value.poster ? value.poster : value.src, name: "" }} /> : <span>אין עדיין</span>}
+        </button>
+        <div className="ad-media-actions">
+          <Button onClick={() => setPicking(true)}>{value ? "החלפה מהספרייה" : "בחירה מהספרייה"}</Button>
+          <Button onClick={() => input.current?.click()} disabled={busy > 0}>
+            {busy ? "מעלה…" : "העלאה"}
+          </Button>
+          {value && (
+            <>
+              <Button onClick={() => setEditing(true)}>פוקוס, חיתוך ותיאור</Button>
+              <Button variant="ghost" onClick={() => onChange(null)}>
+                הסרה
+              </Button>
+            </>
+          )}
+        </div>
+        <input
+          ref={input}
+          type="file"
+          hidden
+          accept={kind === "video" ? "video/mp4,video/webm" : kind === "image" ? "image/jpeg,image/png,image/webp,image/avif,image/gif" : "image/jpeg,image/png,image/webp,image/avif,image/gif,video/mp4,video/webm"}
+          onChange={async (e) => {
+            const f = e.target.files;
+            if (f?.length) {
+              const [a] = await upload(f);
+              if (a) onChange(refFromAsset(a, value));
+            }
+            e.target.value = "";
+          }}
+        />
+      </div>
+      {value && !value.alt && <p className="ad-warning">חסר תיאור לנגישות.</p>}
+      {errors.map((e) => (
+        <p key={e} className="ad-warning" role="alert">
+          {e}
+        </p>
+      ))}
+
+      <Modal open={picking} onClose={() => setPicking(false)} title={`בחירת ${label}`} wide>
+        <MediaLibrary
+          kind={kind}
+          onSelect={(a) => {
+            onChange(refFromAsset(a, value));
+            setPicking(false);
+          }}
+        />
+      </Modal>
+      <Modal open={editing} onClose={() => setEditing(false)} title={label} wide>
+        {value && <MediaRefEditor value={value} onChange={onChange} ratio={ratio} />}
+      </Modal>
+    </div>
+  );
+}

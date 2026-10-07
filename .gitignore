@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# CMS: נתונים והעלאות במצב local (פיתוח)
+/.data
+/public/uploads
