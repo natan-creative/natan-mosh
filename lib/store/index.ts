@@ -16,11 +16,14 @@ export const CONTENT_TAG = "site-content";
 export async function getPublishedContent(): Promise<SiteContent> {
   "use cache";
   cacheTag(CONTENT_TAG);
-  cacheLife("days");
   try {
-    return normalizeContent(await store.readPublished());
+    const content = normalizeContent(await store.readPublished());
+    cacheLife("days");
+    return content;
   } catch (e) {
+    // תקלה זמנית: מציגים ברירת מחדל, אבל לא שומרים אותה ב-cache לאורך זמן
     console.error("[content] failed to read published content, using defaults", e);
+    cacheLife("minutes");
     return normalizeContent(null);
   }
 }
