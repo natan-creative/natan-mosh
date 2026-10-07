@@ -9,7 +9,7 @@ export default function FooterEditor() {
   usePreviewPath("/#contact");
   return (
     <>
-      <PageHeader title="Footer" intro="השורה האחרונה בכל עמוד." />
+      <PageHeader title="תחתית העמוד" intro="השורה האחרונה בכל עמוד." />
       <Card>
         <TextInput label="זכויות יוצרים" dir="ltr" value={c.footer.copyright} onChange={(v) => update((d) => void (d.footer.copyright = v), "footer.copy")} />
         <TextInput label="קריצה" hint="הטקסט הקטן באמצע. ריק = בלי קריצה." value={c.footer.wink.idle} onChange={(v) => update((d) => void (d.footer.wink.idle = v), "footer.wink.idle")} />

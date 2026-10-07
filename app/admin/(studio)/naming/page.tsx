@@ -36,7 +36,7 @@ export default function NamingEditor() {
 
   return (
     <>
-      <PageHeader title="Naming" intro="שמות שיצרת. הסגנון קובע איך השם נראה באתר." actions={<Button variant="primary" onClick={add}>+ הוסף שם</Button>} />
+      <PageHeader title="שמות" intro="שמות שיצרת. הסגנון קובע איך השם נראה באתר." actions={<Button variant="primary" onClick={add}>+ הוסף שם</Button>} />
       <Card title="האזור">
         <TextInput label="כותרת" dir="ltr" value={c.naming.title} onChange={(v) => update((d) => void (d.naming.title = v), "naming.title")} />
         <NumberInput label="כמה שמות להציג לפני 'לכל השמות'" value={c.naming.visibleCount} min={1} max={24} onChange={(v) => update((d) => void (d.naming.visibleCount = v))} />

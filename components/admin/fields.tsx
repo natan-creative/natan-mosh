@@ -32,11 +32,11 @@ export function LinkInput({ label, hint, value, onChange }: { label: string; hin
   const id = useId();
   const options = [
     ["/", "דף הבית"],
-    ["/#work", "Selected Work"],
-    ["/#digital", "Digital / Ideas"],
-    ["/#naming", "Naming"],
-    ["/#about", "About"],
-    ["/#contact", "Contact"],
+    ["/#work", "עבודות נבחרות"],
+    ["/#digital", "דיגיטל ורעיונות"],
+    ["/#naming", "שמות"],
+    ["/#about", "אודות"],
+    ["/#contact", "יצירת קשר"],
     ["/work", "כל העבודות"],
     ["/accessibility", "הצהרת נגישות"],
     ...content.work.projects.map((p) => [`/work/${p.slug}`, `עבודה: ${p.title}`]),

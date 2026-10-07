@@ -9,14 +9,14 @@ export default function AboutEditor() {
   usePreviewPath("/#about");
   return (
     <>
-      <PageHeader title="About" intro="כמה שורות. לא קורות חיים." />
+      <PageHeader title="אודות" intro="כמה שורות. לא קורות חיים." />
       <Card>
         <TextInput label="כותרת" dir="ltr" value={c.about.title} onChange={(v) => update((d) => void (d.about.title = v), "about.title")} />
         <TextArea label="טקסט" hint="כל שורה בפסקה נפרדת" rows={5} value={c.about.body} onChange={(v) => update((d) => void (d.about.body = v), "about.body")} />
         <TextArea label="ציטוט" hint="לא חובה" rows={2} value={c.about.quote} onChange={(v) => update((d) => void (d.about.quote = v), "about.quote")} />
         <MediaField label="תמונה" hint="לא חובה" kind="image" ratio="4/5" value={c.about.image} onChange={(m) => update((d) => void (d.about.image = m))} />
       </Card>
-      <Card title="רשתות" hint="אותם קישורים מופיעים גם ב-Contact">
+      <Card title="רשתות" hint="אותם קישורים מופיעים גם ביצירת קשר">
         <TextInput label="LinkedIn" dir="ltr" value={c.contact.linkedin} onChange={(v) => update((d) => void (d.contact.linkedin = v), "contact.linkedin")} />
         <TextInput label="Instagram" dir="ltr" value={c.contact.instagram} onChange={(v) => update((d) => void (d.contact.instagram = v), "contact.instagram")} />
       </Card>

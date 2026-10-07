@@ -9,7 +9,7 @@ export default function ContactEditor() {
   const set = (k: "title" | "email" | "phone" | "linkedin" | "instagram" | "cta") => (v: string) => update((d) => void (d.contact[k] = v), `contact.${k}`);
   return (
     <>
-      <PageHeader title="Contact" intro="פשוט וישיר." />
+      <PageHeader title="יצירת קשר" intro="פשוט וישיר." />
       <Card>
         <TextInput label="כותרת" dir="ltr" value={c.contact.title} onChange={set("title")} />
         <TextInput label="משפט הזמנה" hint="לא חובה. למשל: יש בריף? בוא נחשוב עליו." value={c.contact.cta} onChange={set("cta")} />

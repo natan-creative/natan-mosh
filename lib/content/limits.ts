@@ -65,7 +65,7 @@ const base = {
 
 export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omit<Theme, "preset"> }> = {
   editorial: {
-    label: "Editorial",
+    label: "מגזיני",
     hint: "נייר, דיו וצהוב. ברירת המחדל.",
     theme: {
       grain: true,
@@ -74,7 +74,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     },
   },
   bold: {
-    label: "Bold",
+    label: "נועז",
     hint: "צהוב חזק, שחור, בלי פשרות.",
     theme: {
       grain: false,
@@ -83,7 +83,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     },
   },
   minimal: {
-    label: "Minimal",
+    label: "מינימלי",
     hint: "לבן, שקט, הרבה אוויר.",
     theme: {
       grain: false,
@@ -96,7 +96,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     },
   },
   dark: {
-    label: "Dark",
+    label: "כהה",
     hint: "לילה. העבודות זוהרות.",
     theme: {
       grain: true,

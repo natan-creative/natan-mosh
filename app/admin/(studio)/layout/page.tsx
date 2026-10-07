@@ -7,11 +7,11 @@ import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
 import { Card, PageHeader, Toggle } from "@/components/admin/ui";
 
 const NAMES: Record<SectionId, { label: string; href: string }> = {
-  work: { label: "Selected Work", href: "/admin/work" },
-  digital: { label: "Digital / Ideas", href: "/admin/digital" },
-  naming: { label: "Naming", href: "/admin/naming" },
-  about: { label: "About", href: "/admin/about" },
-  contact: { label: "Contact", href: "/admin/contact" },
+  work: { label: "עבודות נבחרות", href: "/admin/work" },
+  digital: { label: "דיגיטל ורעיונות", href: "/admin/digital" },
+  naming: { label: "שמות", href: "/admin/naming" },
+  about: { label: "אודות", href: "/admin/about" },
+  contact: { label: "יצירת קשר", href: "/admin/contact" },
 };
 
 export default function LayoutEditor() {
@@ -20,7 +20,7 @@ export default function LayoutEditor() {
   return (
     <>
       <PageHeader title="סדר ופריסה" intro="אילו אזורים מופיעים בדף הבית, ובאיזה סדר. הסתרה לא מוחקת את התוכן." />
-      <Card title="אזורים בדף הבית" hint="Hero תמיד ראשון. About ו-Contact מוצגים זה לצד זה, במקום של הראשון מביניהם.">
+      <Card title="אזורים בדף הבית" hint="הפתיחה תמיד ראשונה. אודות ויצירת קשר מוצגים זה לצד זה, במקום של הראשון מביניהם.">
         <SortableList
           items={c.sections}
           getId={(s) => s.id}
@@ -41,7 +41,7 @@ export default function LayoutEditor() {
       </Card>
       <Card title="עוד">
         <p className="ad-hint">
-          עמודות בגריד הדיגיטל: ב<Link href="/admin/digital">Digital / Ideas</Link> ← עיצוב. Header נעוץ: ב<Link href="/admin/header">Header</Link>.
+          עמודות בגריד הדיגיטל: ב<Link href="/admin/digital">דיגיטל ורעיונות</Link> ← עיצוב. תפריט שנשאר למעלה: ב<Link href="/admin/header">תפריט עליון</Link>.
         </p>
       </Card>
     </>

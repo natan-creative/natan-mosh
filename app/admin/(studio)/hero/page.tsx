@@ -14,13 +14,13 @@ export default function HeroEditor() {
 
   return (
     <>
-      <PageHeader title="Hero" intro="הדבר הראשון שרואים באתר." />
+      <PageHeader title="פתיחה" intro="הדבר הראשון שרואים באתר." />
       <Tabs value={tab} onChange={setTab} tabs={[{ id: "content", label: "תוכן" }, { id: "design", label: "עיצוב" }]} />
 
       {tab === "content" ? (
         <>
           <Card title="טקסט">
-            <TextInput label="שם" hint="מופיע ב-Header ובכל האתר" value={c.brand.name} onChange={(v) => update((d) => void (d.brand.name = v), "brand.name")} />
+            <TextInput label="שם" hint="מופיע בתפריט העליון ובכל האתר" value={c.brand.name} onChange={(v) => update((d) => void (d.brand.name = v), "brand.name")} />
             <TextArea label="כותרת ראשית" hint="כל שורה תופיע בשורה נפרדת" rows={3} dir="ltr" value={c.hero.headline} onChange={(v) => update((d) => void (d.hero.headline = v), "hero.headline")} />
             <TextArea label="פתק בכתב יד" hint="כל שורה בשורה נפרדת. ריק = בלי פתק." rows={4} value={c.hero.note} onChange={(v) => update((d) => void (d.hero.note = v), "hero.note")} />
             <TextInput label="תפקיד" value={c.brand.role} onChange={(v) => update((d) => void (d.brand.role = v), "brand.role")} />

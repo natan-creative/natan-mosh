@@ -10,7 +10,7 @@ export default function HeaderEditor() {
   const bg = c.header.background || c.theme.colors.background;
   return (
     <>
-      <PageHeader title="Header" intro="השם והתפריט בראש כל עמוד." />
+      <PageHeader title="תפריט עליון" intro="השם והתפריט בראש כל עמוד." />
       <Card title="שם">
         <TextInput label="שם מלא" value={c.brand.name} onChange={(v) => update((d) => void (d.brand.name = v), "brand.name")} />
         <TextInput label="קיצור" hint="מופיע כשגוללים: NK / Natan Kosovsky" dir="ltr" value={c.brand.short} onChange={(v) => update((d) => void (d.brand.short = v), "brand.short")} />
@@ -19,9 +19,9 @@ export default function HeaderEditor() {
         <NavEditor items={c.header.nav} keyPrefix="nav" onChange={(items, key) => update((d) => void (d.header.nav = items), key)} />
       </Card>
       <Card title="עיצוב">
-        <Toggle label="Header נשאר למעלה בגלילה" checked={c.header.sticky} onChange={(v) => update((d) => void (d.header.sticky = v))} />
+        <Toggle label="התפריט נשאר למעלה בגלילה" checked={c.header.sticky} onChange={(v) => update((d) => void (d.header.sticky = v))} />
         <ColorInput label="רקע" hint="ריק = כמו רקע האתר" allowEmpty value={c.header.background} onChange={(v) => update((d) => void (d.header.background = v), "header.bg")} />
-        <ColorInput label="צבע טקסט" hint="ריק = כמו הטקסט באתר" allowEmpty value={c.header.text} against={bg} againstLabel="רקע ה-Header" onChange={(v) => update((d) => void (d.header.text = v), "header.text")} />
+        <ColorInput label="צבע טקסט" hint="ריק = כמו הטקסט באתר" allowEmpty value={c.header.text} against={bg} againstLabel="רקע התפריט העליון" onChange={(v) => update((d) => void (d.header.text = v), "header.text")} />
       </Card>
     </>
   );

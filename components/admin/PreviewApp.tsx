@@ -68,7 +68,7 @@ export function PreviewApp({ initial, embed, initialPath, revision }: { initial:
     <>
       {!embed && (
         <div className="preview-banner" role="status">
-          <span>PREVIEW MODE{revision ? " · גרסה מההיסטוריה" : " · טיוטה"}</span>
+          <span>תצוגה מקדימה{revision ? " · גרסה מההיסטוריה" : " · טיוטה"}</span>
           <a href="/admin">חזרה לעריכה</a>
         </div>
       )}

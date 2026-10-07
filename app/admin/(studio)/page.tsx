@@ -7,12 +7,12 @@ import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
 import { Button } from "@/components/admin/ui";
 
 const QUICK = [
-  { href: "/admin/hero", title: "Hero", text: "הכותרת, הפתק והתמונה בפתיחה" },
-  { href: "/admin/work", title: "Selected Work", text: "העבודות וה-Case Studies" },
-  { href: "/admin/digital", title: "Digital / Ideas", text: "בעיה → רעיון → ביצוע" },
-  { href: "/admin/naming", title: "Naming", text: "השמות שיצרת" },
+  { href: "/admin/hero", title: "פתיחה", text: "הכותרת, הפתק והתמונה בפתיחה" },
+  { href: "/admin/work", title: "עבודות נבחרות", text: "העבודות המרכזיות" },
+  { href: "/admin/digital", title: "דיגיטל ורעיונות", text: "בעיה → רעיון → ביצוע" },
+  { href: "/admin/naming", title: "שמות", text: "השמות שיצרת" },
   { href: "/admin/media", title: "ספריית מדיה", text: "תמונות וסרטונים" },
-  { href: "/admin/style", title: "סגנון וצבעים", text: "Editorial, Bold, Minimal, Dark" },
+  { href: "/admin/style", title: "סגנון וצבעים", text: "מגזיני, נועז, מינימלי, כהה" },
 ];
 
 export default function Dashboard() {
@@ -31,7 +31,7 @@ export default function Dashboard() {
       <div className="ad-cards">
         <section className="ad-stat">
           <h2>האתר</h2>
-          <p className="ad-stat-big">Published</p>
+          <p className="ad-stat-big">מפורסם</p>
           <a href="/" target="_blank" rel="noreferrer" className="ad-link">
             לאתר החי ↗
           </a>
@@ -42,12 +42,12 @@ export default function Dashboard() {
           {changes.length > 0 && <p className="ad-hint">{changes.map((k) => AREA_LABELS[k]).join(", ")}</p>}
         </section>
         <section className="ad-stat">
-          <h2>Preview</h2>
+          <h2>תצוגה מקדימה</h2>
           <p className="ad-hint">האתר עם כל השינויים, לפני שהם עולים לאוויר.</p>
           <Button onClick={() => openPreview("/")}>פתח תצוגה מקדימה</Button>
         </section>
         <section className="ad-stat">
-          <h2>Publish</h2>
+          <h2>פרסום</h2>
           <p className="ad-hint">מעלה את הטיוטה לאתר החי.</p>
           <Button variant="primary" onClick={publishFlow} disabled={!changes.length}>
             פרסם שינויים

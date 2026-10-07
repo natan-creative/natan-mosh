@@ -10,7 +10,7 @@ export default function SeoEditor() {
   const s = c.settings;
   return (
     <>
-      <PageHeader title="SEO" intro="איך האתר נראה בגוגל ובשיתוף ברשתות." />
+      <PageHeader title="גוגל ושיתוף" intro="איך האתר נראה בגוגל ובשיתוף ברשתות." />
       <Card>
         <TextInput label="כותרת העמוד" hint={`${s.siteTitle.length} תווים · מומלץ עד 60`} value={s.siteTitle} onChange={(v) => update((d) => void (d.settings.siteTitle = v), "seo.title")} />
         <TextArea label="תיאור" hint={`${s.metaDescription.length} תווים · מומלץ עד 155`} rows={3} value={s.metaDescription} onChange={(v) => update((d) => void (d.settings.metaDescription = v), "seo.desc")} />

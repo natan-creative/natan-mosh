@@ -14,14 +14,14 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
   {
     group: "תוכן",
     items: [
-      { href: "/admin/hero", label: "Hero" },
-      { href: "/admin/work", label: "Selected Work" },
-      { href: "/admin/digital", label: "Digital / Ideas" },
-      { href: "/admin/naming", label: "Naming" },
-      { href: "/admin/about", label: "About" },
-      { href: "/admin/contact", label: "Contact" },
-      { href: "/admin/header", label: "Header" },
-      { href: "/admin/footer", label: "Footer" },
+      { href: "/admin/hero", label: "פתיחה" },
+      { href: "/admin/work", label: "עבודות נבחרות" },
+      { href: "/admin/digital", label: "דיגיטל ורעיונות" },
+      { href: "/admin/naming", label: "שמות" },
+      { href: "/admin/about", label: "אודות" },
+      { href: "/admin/contact", label: "יצירת קשר" },
+      { href: "/admin/header", label: "תפריט עליון" },
+      { href: "/admin/footer", label: "תחתית העמוד" },
     ],
   },
   {
@@ -37,7 +37,7 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
   {
     group: "אתר",
     items: [
-      { href: "/admin/seo", label: "SEO" },
+      { href: "/admin/seo", label: "גוגל ושיתוף" },
       { href: "/admin/settings", label: "הגדרות" },
       { href: "/admin/history", label: "היסטוריית גרסאות" },
     ],
@@ -178,7 +178,7 @@ export function StudioShell({ children, email }: { children: React.ReactNode; em
             ☰ תפריט
           </button>
           <Link href="/admin" className="ad-logo">
-            Studio
+            הסטודיו
           </Link>
           <SaveStatus />
         </div>

@@ -13,21 +13,21 @@ export function walkMedia(c: SiteContent, visit: Visit) {
       visit({ ...r, id: `poster:${r.poster}`, kind: "image", src: r.poster }, `${where} (תמונת פתיחה לווידאו)`, () => {});
     }
   };
-  slot(c.hero, "image", "Hero");
-  slot(c.hero, "video", "Hero (וידאו)");
-  slot(c.about, "image", "About");
-  slot(c.settings, "ogImage", "SEO (תמונת שיתוף)");
+  slot(c.hero, "image", "פתיחה");
+  slot(c.hero, "video", "פתיחה (וידאו)");
+  slot(c.about, "image", "אודות");
+  slot(c.settings, "ogImage", "גוגל ושיתוף (תמונת שיתוף)");
   slot(c.settings, "favicon", "הגדרות (Favicon)");
   for (const p of c.work.projects) {
-    slot(p, "cover", `Selected Work › ${p.title}`);
+    slot(p, "cover", `עבודות נבחרות › ${p.title}`);
     p.gallery = p.gallery.filter((g) => {
       let keep = true;
-      visit(g.media, `Selected Work › ${p.title} › גלריה`, (v) => (v ? (g.media = v) : (keep = false)));
+      visit(g.media, `עבודות נבחרות › ${p.title} › גלריה`, (v) => (v ? (g.media = v) : (keep = false)));
       return keep;
     });
   }
-  for (const d of c.digital.items) slot(d, "media", `Digital › ${d.title}`);
-  for (const n of c.naming.items) slot(n, "image", `Naming › ${n.name}`);
+  for (const d of c.digital.items) slot(d, "media", `דיגיטל › ${d.title}`);
+  for (const n of c.naming.items) slot(n, "image", `שמות › ${n.name}`);
 }
 
 export function mediaUsage(c: SiteContent): Map<string, string[]> {

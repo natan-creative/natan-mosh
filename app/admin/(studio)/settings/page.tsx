@@ -17,7 +17,7 @@ export default function SettingsEditor() {
         <TextInput label="מייל" type="email" dir="ltr" value={c.contact.email} onChange={(v) => update((d) => void (d.contact.email = v), "contact.email")} />
         <TextInput label="טלפון" dir="ltr" value={c.contact.phone} onChange={(v) => update((d) => void (d.contact.phone = v), "contact.phone")} />
         <p className="ad-hint">
-          רשתות ווואטסאפ: ב<Link href="/admin/contact">Contact</Link>.
+          רשתות ווואטסאפ: ב<Link href="/admin/contact">יצירת קשר</Link>.
         </p>
       </Card>
       <Card title="Favicon" hint="האייקון הקטן בלשונית הדפדפן. תמונה ריבועית, PNG.">

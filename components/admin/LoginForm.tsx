@@ -9,7 +9,7 @@ export function LoginForm({ mode }: { mode: "supabase" | "local" | "unconfigured
   if (mode === "unconfigured") {
     return (
       <div className="ad-login-card">
-        <h1>Studio</h1>
+        <h1>הסטודיו</h1>
         <p>מערכת הניהול עוד לא מחוברת. צריך להגדיר את Supabase (ראו README).</p>
       </div>
     );
@@ -17,7 +17,7 @@ export function LoginForm({ mode }: { mode: "supabase" | "local" | "unconfigured
 
   return (
     <form action={action} className="ad-login-card">
-      <h1>Studio</h1>
+      <h1>הסטודיו</h1>
       <p className="ad-hint">כניסה לעריכת האתר</p>
       {mode === "supabase" && (
         <>

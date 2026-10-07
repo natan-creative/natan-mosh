@@ -32,7 +32,7 @@ export default function DigitalEditor() {
 
   return (
     <>
-      <PageHeader title="Digital / Ideas" intro="רוחב העבודה השוטפת. לכל עבודה: בעיה → רעיון → ביצוע." actions={<Button variant="primary" onClick={add}>+ הוסף עבודה</Button>} />
+      <PageHeader title="דיגיטל ורעיונות" intro="רוחב העבודה השוטפת. לכל עבודה: בעיה → רעיון → ביצוע." actions={<Button variant="primary" onClick={add}>+ הוסף עבודה</Button>} />
       <Tabs value={tab} onChange={setTab} tabs={[{ id: "content", label: "תוכן" }, { id: "design", label: "עיצוב" }]} />
 
       {tab === "design" ? (

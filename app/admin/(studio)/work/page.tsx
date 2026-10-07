@@ -24,7 +24,7 @@ export default function WorkList() {
   return (
     <>
       <PageHeader
-        title="Selected Work"
+        title="עבודות נבחרות"
         intro="העבודות המרכזיות. גרור כדי לשנות סדר."
         actions={
           <Button variant="primary" onClick={add}>
@@ -59,7 +59,7 @@ export default function WorkList() {
                 <span>
                   <strong>{p.title || "ללא שם"}</strong>
                   <span className="ad-hint">
-                    {p.type === "case" ? "Case Study" : "רעיון קצר"} · {p.kind}
+                    {p.type === "case" ? "עבודה מלאה" : "רעיון קצר"} · {p.kind}
                     {p.hidden ? " · מוסתר" : ""}
                   </span>
                 </span>

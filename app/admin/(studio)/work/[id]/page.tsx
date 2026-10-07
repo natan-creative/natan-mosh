@@ -29,7 +29,7 @@ export default function ProjectEditor() {
       <>
         <PageHeader title="העבודה לא נמצאה" intro="ייתכן שהיא נמחקה." />
         <Link href="/admin/work" className="ad-btn ad-btn-secondary">
-          חזרה ל-Selected Work
+          חזרה ל-עבודות נבחרות
         </Link>
       </>
     );
@@ -50,7 +50,7 @@ export default function ProjectEditor() {
   return (
     <>
       <p className="ad-crumb">
-        <Link href="/admin/work">→ Selected Work</Link>
+        <Link href="/admin/work">→ עבודות נבחרות</Link>
       </p>
       <PageHeader
         title={p.title || "עבודה חדשה"}
@@ -72,11 +72,11 @@ export default function ProjectEditor() {
           <Card title="בסיס">
             <Segmented
               label="סוג העבודה"
-              hint="Case Study מקבל עמוד מלא: בריף, אתגר, רעיון, ביצוע ותוצאה. רעיון קצר מקבל עמוד קצר."
+              hint="עבודה מלאה מקבלת עמוד עם כל הסיפור: בריף, אתגר, רעיון, ביצוע ותוצאה. רעיון קצר מקבל עמוד קצר."
               value={p.type}
               onChange={(v) => set("type", v)}
               options={[
-                { value: "case", label: "Case Study" },
+                { value: "case", label: "עבודה מלאה" },
                 { value: "idea", label: "רעיון קצר" },
               ]}
             />
@@ -95,12 +95,12 @@ export default function ProjectEditor() {
           </Card>
           {isCase ? (
             <Card title="הסיפור" hint="כל חלק שנשאר ריק פשוט לא יופיע.">
-              <TextArea label="The Brief: מה ביקשו?" value={p.brief} onChange={text("brief")} />
-              <TextArea label="The Challenge: מה באמת היה צריך לפתור?" value={p.challenge} onChange={text("challenge")} />
-              <TextArea label="The Idea: הרעיון במשפט אחד" value={p.idea} onChange={text("idea")} />
+              <TextArea label="הבריף: מה ביקשו?" value={p.brief} onChange={text("brief")} />
+              <TextArea label="האתגר: מה באמת היה צריך לפתור?" value={p.challenge} onChange={text("challenge")} />
+              <TextArea label="הרעיון: במשפט אחד" value={p.idea} onChange={text("idea")} />
               <TextArea label="הרחבה על הרעיון" value={p.ideaMore} onChange={text("ideaMore")} />
-              <TextArea label="The Execution: איך זה יצא לעולם" value={p.execution} onChange={text("execution")} />
-              <TextArea label="The Result: מה יצא מזה" value={p.result} onChange={text("result")} />
+              <TextArea label="הביצוע: איך זה יצא לעולם" value={p.execution} onChange={text("execution")} />
+              <TextArea label="התוצאה: מה יצא מזה" value={p.result} onChange={text("result")} />
               <TextArea label="מספרים" hint="מספר אחד בכל שורה (למשל: 2.4M צפיות)" rows={3} value={p.stats.join("\n")} onChange={(v) => set("stats", v.split("\n"))} />
             </Card>
           ) : (
