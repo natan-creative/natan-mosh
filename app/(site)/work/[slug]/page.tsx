@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getPublishedContent } from "@/lib/store";
 import { ProjectView } from "@/components/site/views";
 
@@ -16,7 +17,17 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     : { title: c.brand.name };
 }
 
-export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
+// params נקרא בתוך Suspense: עבודות שקיימות בזמן ה-build מוכנות מראש לגמרי,
+// ועבודה חדשה (שנוספה מה-Admin אחרי ה-deploy) מקבלת מסגרת ריקה לרגע עד שהיא נבנית.
+async function Project({ params }: Pick<PageProps<"/work/[slug]">, "params">) {
   const { slug } = await params;
   return <ProjectView c={await getPublishedContent()} slug={slug} />;
+}
+
+export default function WorkPage({ params }: PageProps<"/work/[slug]">) {
+  return (
+    <Suspense fallback={<main id="main" className="case" aria-busy="true" />}>
+      <Project params={params} />
+    </Suspense>
+  );
 }

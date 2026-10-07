@@ -2,7 +2,6 @@
 // את ה-Live Preview ואת הגרסאות בהיסטוריה.
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ViewTransition } from "react";
 import type { SiteContent } from "@/lib/content/types";
 import { AboutContact, real, SiteFooter, tel } from "./AboutContact";
 import { DigitalGrid } from "./DigitalGrid";
@@ -12,7 +11,7 @@ import { NamingRow } from "./NamingRow";
 import { PageTransition } from "./PageTransition";
 import { Parallax } from "./Parallax";
 import { SectionHead } from "./SectionHead";
-import { pad, WorkGrid } from "./WorkGrid";
+import { morphStyle, pad, WorkGrid } from "./WorkGrid";
 
 const visibleProjects = (c: SiteContent) => c.work.projects.filter((p) => !p.hidden);
 const visibleDigital = (c: SiteContent) => c.digital.items.filter((d) => !d.hidden);
@@ -125,13 +124,11 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
 
         {w.cover && (
           <div className="case-visual wrap">
-            <ViewTransition name={`work-${w.id}`} share="morph" default="none">
-              <div className="case-cover">
-                <Parallax>
-                  <Media media={w.cover} ratio={w.design.heroRatio} sizes="100vw" priority />
-                </Parallax>
-              </div>
-            </ViewTransition>
+            <div className="case-cover" style={morphStyle(w.id)}>
+              <Parallax>
+                <Media media={w.cover} ratio={w.design.heroRatio} sizes="100vw" priority />
+              </Parallax>
+            </div>
           </div>
         )}
 
