@@ -6,7 +6,7 @@ import { site, works } from "@/content/site";
 import { PageTransition } from "@/components/PageTransition";
 import { Media } from "@/components/Media";
 import { Parallax } from "@/components/Parallax";
-import { Contact } from "@/components/Contact";
+import { AboutContact } from "@/components/AboutContact";
 import { pad } from "@/components/WorkGrid";
 
 export function generateStaticParams() {
@@ -156,7 +156,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
           )}
         </div>
       </main>
-      <Contact />
+      <AboutContact />
     </PageTransition>
   );
 }

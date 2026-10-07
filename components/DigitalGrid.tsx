@@ -4,66 +4,49 @@ import Image from "next/image";
 import { useState } from "react";
 import { digital } from "@/content/site";
 
-// גריד משתנה: 4 → 3 → 2 → 3. כל שורה ביחס תמונה משלה.
-const rows = [
-  { count: 4, ratio: "4 / 5", sizes: "(max-width: 767px) 100vw, (max-width: 1099px) 50vw, 25vw" },
-  { count: 3, ratio: "1 / 1", sizes: "(max-width: 767px) 100vw, (max-width: 1099px) 50vw, 33vw" },
-  { count: 2, ratio: "3 / 2", sizes: "(max-width: 767px) 100vw, 50vw" },
-  { count: 3, ratio: "1 / 1", sizes: "(max-width: 767px) 100vw, (max-width: 1099px) 50vw, 33vw" },
-];
-
-const layout = rows.flatMap((r) => Array.from({ length: r.count }, () => r));
-
-export function DigitalGrid() {
+// משבצות ריבועיות. hover (או tap בטלפון) חושף: בעיה → רעיון → ביצוע.
+export function DigitalGrid({ limit }: { limit?: number }) {
   const [open, setOpen] = useState<number | null>(null);
+  const items = limit ? digital.slice(0, limit) : digital;
 
   return (
     <div className="digital-grid">
-      {digital.map((d, i) => {
-        const row = layout[i % layout.length];
+      {items.map((d, i) => {
         const isOpen = open === i;
         return (
-          <article
-            key={i}
-            className="d-tile"
-            data-open={isOpen || undefined}
-            style={{ ["--span" as string]: 12 / row.count, ["--accent" as string]: d.accent ?? "var(--ink)" }}
-            data-reveal="up"
-          >
+          <article key={i} className="d-tile" data-open={isOpen || undefined} data-reveal="up" style={{ ["--i" as string]: i % 5 }}>
             <button
               type="button"
               className="d-face"
-              style={{ aspectRatio: row.ratio }}
               aria-expanded={isOpen}
-              aria-label={`${d.title}: בעיה, רעיון, ביצוע`}
+              aria-label={`${d.title}, ${d.client}: בעיה, רעיון, ביצוע`}
               onClick={() => setOpen(isOpen ? null : i)}
             >
               {d.face === "visual" && d.media?.kind === "image" ? (
-                <Image src={d.media.src} alt={d.media.alt} fill sizes={row.sizes} />
+                <Image src={d.media.src} alt={d.media.alt} fill sizes="(max-width: 599px) 50vw, (max-width: 999px) 33vw, 20vw" />
               ) : d.face === "logo" && d.logo ? (
-                <Image src={d.logo} alt={d.client} fill sizes={row.sizes} className="d-logo" />
+                <Image src={d.logo} alt={d.client} fill sizes="20vw" className="d-logo" />
               ) : (
                 <span className="d-headline">{d.headline ?? d.client}</span>
               )}
               <span className="d-steps">
-                <span className="d-step" style={{ ["--s" as string]: 0 }}>
-                  <b>בעיה</b>
-                  {d.problem}
+                <span className="d-head">
+                  {d.title} <small>{d.client}</small>
                 </span>
-                <span className="d-step" style={{ ["--s" as string]: 1 }}>
-                  <b>רעיון</b>
-                  {d.idea}
-                </span>
-                <span className="d-step" style={{ ["--s" as string]: 2 }}>
-                  <b>ביצוע</b>
-                  {d.execution}
-                </span>
+                {(
+                  [
+                    ["בעיה", d.problem],
+                    ["רעיון", d.idea],
+                    ["ביצוע", d.execution],
+                  ] as const
+                ).map(([label, text], s) => (
+                  <span key={label} className="d-step" style={{ ["--s" as string]: s }}>
+                    <b>{label}</b>
+                    {text}
+                  </span>
+                ))}
               </span>
             </button>
-            <div className="d-meta">
-              <h3 className="d-title">{d.title}</h3>
-              <span className="d-client">{d.client}</span>
-            </div>
           </article>
         );
       })}

@@ -26,13 +26,6 @@ export function SiteHeader() {
   return (
     <header className="site-header" data-scrolled={scrolled || undefined} data-open={open || undefined}>
       <div className="wrap header-row">
-        <Link href="/" className="brand" aria-label={`${site.name} — דף הבית`} transitionTypes={["nav-back"]} onClick={() => setOpen(false)}>
-          <span className="brand-full latin">NATAN KOSOVSKY</span>
-          <span className="brand-short latin" aria-hidden="true">
-            <b>{site.short}</b> / Natan Kosovsky
-          </span>
-        </Link>
-
         <nav className="nav" aria-label="ניווט ראשי">
           {nav.map((n) => (
             <Link key={n.href} href={n.href} className="nav-link" transitionTypes={["nav-back"]}>
@@ -40,6 +33,13 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+
+        <Link href="/" className="brand" aria-label={`${site.name} — דף הבית`} transitionTypes={["nav-back"]} onClick={() => setOpen(false)}>
+          <span className="brand-full latin">NATAN KOSOVSKY</span>
+          <span className="brand-short latin" aria-hidden="true">
+            <b>{site.short}</b> / Natan Kosovsky
+          </span>
+        </Link>
 
         <button
           className="menu-btn"

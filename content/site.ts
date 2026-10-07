@@ -15,6 +15,8 @@ export type Work = {
   title: string;
   subtitle: string;
   category: string;
+  /** מה שמופיע מתחת לכרטיס: קמפיין / קונספט */
+  kind: string;
   client: string;
   year?: string;
   role?: string;
@@ -27,6 +29,8 @@ export type Work = {
   ratio: Ratio;
   summary: string;
   cover: Media;
+  /** נקודת המיקוד של תמונת השער כשהיא נחתכת לכרטיס, למשל "20% 50%" */
+  focus?: string;
   brief?: string;
   challenge?: string;
   idea?: string;
@@ -55,9 +59,10 @@ export type DigitalWork = {
 export type Name = {
   name: string;
   what: string;
+  /** איך השם נראה כ-wordmark */
+  style: "black" | "heavy" | "serif" | "spaced" | "wide";
   /** הסבר קצר, רק כשזה מוסיף */
   note?: string;
-  image?: Media;
 };
 
 export const site = {
@@ -71,18 +76,15 @@ export const site = {
 };
 
 export const hero = {
-  // שורת הפתיחה. החלק ב-struck נמחק בקו אדום. אפשר להשאיר struck ריק.
-  line: { before: "לוקח בריף ומחזיר", struck: "פוסט", after: "רעיון." },
-  // חלופות שעלו (להחליף ב-line אם בוחרים אחת מהן):
-  // "רעיונות מתחילים בבריף. אני אוהב לראות לאן אפשר לקחת אותם."
-  // "קריאייטיב מתחיל בשאלה טובה."
-  // "אני מחפש את הרעיון שמצליח לגרום לאנשים לעצור."
-  thoughts: ["BRIEF", "INSIGHT", "IDEA", "CONCEPT", "EXECUTION"],
+  headline: ["GOOD IDEAS", "DON\u2019T HAPPEN", "BY ACCIDENT."],
+  // הפתק בכתב יד ליד התמונה
+  note: ["רק רעיונות", "טובים", "מייצרים", "תנועה."],
+  image: { kind: "image", src: "/work/hero-crown.webp", alt: "נתן מגבו, עם כתר צהוב מצויר מעל הראש" } as Media,
 };
 
 // הקריצות הקטנות של האתר. לא יותר משלוש.
 export const winks = {
-  works: { idle: "אין כאן שום דבר חשוב.", reveal: "חוץ מהעבודות." },
+  footer: { idle: "אין כאן שום דבר חשוב.", reveal: "חוץ מהעבודות." },
   notFound: "הרעיון הזה עוד לא נכתב.",
 };
 
@@ -91,6 +93,7 @@ const img = (name: string, alt: string): Media => ({ kind: "image", src: `/work/
 export const works: Work[] = [
   {
     slug: "bein-levein",
+    kind: "קמפיין",
     title: "בין לבין",
     subtitle: "לנפח סופרלטיבים",
     category: "Campaign",
@@ -118,6 +121,7 @@ export const works: Work[] = [
   },
   {
     slug: "mycal",
+    kind: "קמפיין",
     title: "כ.א.ל",
     subtitle: "קמפיין MyCAL",
     category: "Campaign",
@@ -145,6 +149,7 @@ export const works: Work[] = [
   },
   {
     slug: "branding-god",
+    kind: "קונספט",
     title: "ממתגים את אלוהים",
     subtitle: "מותג. אמונה. קהילה.",
     category: "Idea",
@@ -164,6 +169,7 @@ export const works: Work[] = [
   },
   {
     slug: "milky-upside-down",
+    kind: "קמפיין",
     title: "מילקי הפוך",
     subtitle: "[תת-כותרת]",
     category: "Idea",
@@ -175,6 +181,7 @@ export const works: Work[] = [
     ratio: "5/4",
     summary: "[רעיון קצר: שניים-שלושה משפטים שמסבירים את הרעיון ולמה הוא עובד.]",
     cover: img("milky", "שלט חוצות צהוב: מילקי הפוך, עם כוס מילקי ביד"),
+    focus: "22% 50%",
     idea: "[הרעיון, במשפט אחד.]",
     gallery: [{ media: { kind: "placeholder", label: "ויז'ואל" }, ratio: "16/9", span: "full" }],
   },
@@ -206,34 +213,28 @@ export const digital: DigitalWork[] = digitalImages.map(([file, alt], i) => ({
 }));
 
 export const names: Name[] = [
-  { name: "tuk", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]", image: img("tuk", "לוגו tuk") },
-  { name: "play", what: "[מותג / מוצר]", image: img("play", "כוס play") },
-  { name: "NOVA", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]", image: img("nova", "NOVA על קיר בטון") },
-  { name: "K", what: "[מותג / מוצר]", image: img("k-wall", "האות K על קיר") },
-  { name: "GAIA", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]", image: img("gaia", "GAIA, Natural beauty, real results") },
-  { name: "ARGO", what: "[מותג / מוצר]", image: img("argo", "לוגו ARGO") },
+  { name: "tuk", style: "black", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]" },
+  { name: "פולס", style: "heavy", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]" },
+  { name: "GAIA", style: "serif", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]" },
+  { name: "NOVA", style: "spaced", what: "[מותג / מוצר]", note: "[השם נולד מתוך...]" },
+  { name: "play", style: "black", what: "[מותג / מוצר]" },
+  { name: "ARGO", style: "wide", what: "[מותג / מוצר]" },
+  { name: "K", style: "serif", what: "[מותג / מוצר]" },
 ];
 
 export const about = {
-  title: "קצת עליי.",
-  // המשפט הגדול שמתגלה בגלילה. הצעה, לאשר עם נתן.
-  statement: "אני אוהב רעיונות שאי אפשר להסביר בלי לספר את כל הסיפור.",
+  // מתוך המוקאפ. לאמת עם נתן (במיוחד ה-15+).
   body: [
-    "נתי קוסובסקי הוא Creative Director / Copywriter עם ניסיון ביצירת רעיונות, קמפיינים, קונספטים ושפה למותגים.",
-    "הוא אוהב לקחת בריף מוכר ולשאול: \"איך אפשר לעשות את זה אחרת?\"",
-    "[הטקסט הסופי יוזן כאן: ניסיון, מקומות עבודה, מה הוא עושה היום.]",
+    "אני נתן קוסובסקי, קריאייטיב דיירקטור וכותב.",
+    "15+ שנות ניסיון בעבודה עם מותגים, חברות וסטארטאפים.",
+    "עובד היום עם מותגים שמאמינים בכוח של רעיון טוב.",
   ],
-  clients: ["[לקוח]", "[לקוח]", "[לקוח]", "[לקוח]", "[לקוח]", "[לקוח]", "[לקוח]", "[לקוח]"],
-};
-
-export const contact = {
-  headline: ["יש בריף?", "בוא נחשוב עליו."],
 };
 
 export const nav = [
   { href: "/#work", label: "עבודות" },
   { href: "/#digital", label: "דיגיטל" },
-  { href: "/#naming", label: "Naming" },
+  { href: "/#naming", label: "שמות" },
   { href: "/#about", label: "אודות" },
-  { href: "/#contact", label: "יצירת קשר" },
+  { href: "/#contact", label: "צור קשר" },
 ];

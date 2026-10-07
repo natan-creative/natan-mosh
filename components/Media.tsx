@@ -7,14 +7,16 @@ type Props = {
   sizes: string;
   priority?: boolean;
   className?: string;
+  /** נקודת המיקוד בחיתוך, למשל "20% 50%" */
+  focus?: string;
 };
 
 // מסגרת ביחס קבוע + התוכן בפנים. תמונות דרך next/image (AVIF/WebP, lazy, srcset).
-export function Media({ media, ratio, sizes, priority, className = "" }: Props) {
+export function Media({ media, ratio, sizes, priority, className = "", focus }: Props) {
   return (
     <div className={`media ${className}`} style={{ aspectRatio: ratio.replace("/", " / ") }}>
       {media.kind === "image" && (
-        <Image src={media.src} alt={media.alt} fill sizes={sizes} priority={priority} />
+        <Image src={media.src} alt={media.alt} fill sizes={sizes} priority={priority} style={focus ? { objectPosition: focus } : undefined} />
       )}
       {media.kind === "video" && (
         <video src={media.src} poster={media.poster} controls playsInline preload="metadata" />

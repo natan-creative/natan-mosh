@@ -1,39 +1,37 @@
+import Image from "next/image";
 import { hero, site } from "@/content/site";
-import { ThoughtTicker } from "@/components/ThoughtTicker";
-
-function Letters({ word, start }: { word: string; start: number }) {
-  return (
-    <span className="hero-word" aria-hidden="true">
-      {[...word].map((ch, i) => (
-        <span key={i} className="hero-letter" style={{ ["--i" as string]: start + i }}>
-          {ch}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export function Hero() {
-  const [first, last] = site.name.split(" ");
-  const { before, struck, after } = hero.line;
   return (
-    <section className="hero wrap" aria-label="פתיחה">
-      <ThoughtTicker words={hero.thoughts} />
-      <h1 className="hero-name latin" aria-label={site.name}>
-        <Letters word={first} start={0} />
-        <Letters word={last} start={first.length + 1} />
-      </h1>
-      <div className="hero-bottom">
-        <p className="hero-role latin">{site.role}</p>
-        <p className="hero-line">
-          {before}{" "}
-          {struck && (
-            <>
-              <s className="struck">{struck}</s>{" "}
-            </>
-          )}
-          {after}
-        </p>
+    <section className="hero" aria-label="פתיחה">
+      <div className="hero-photo">
+        {hero.image.kind === "image" && (
+          <Image src={hero.image.src} alt={hero.image.alt} fill priority sizes="(max-width: 767px) 50vw, 26vw" />
+        )}
+      </div>
+
+      <p className="hero-note" aria-label={hero.note.join(" ")}>
+        {hero.note.map((l, i) => (
+          <span key={i} aria-hidden="true" style={{ ["--i" as string]: i }}>
+            {l}
+          </span>
+        ))}
+        <svg className="hero-arrow" viewBox="0 0 80 110" aria-hidden="true">
+          <path d="M58 4 C 70 36, 52 72, 14 100" />
+          <path d="M8 76 L 13 101 L 37 94" />
+        </svg>
+      </p>
+
+      <div className="hero-text latin">
+        <h1 className="hero-headline">
+          {hero.headline.map((l, i) => (
+            <span key={i} className="hero-line" style={{ ["--i" as string]: i }}>
+              <span>{l}</span>
+            </span>
+          ))}
+        </h1>
+        <span className="hero-rule" aria-hidden="true" />
+        <p className="hero-role">{site.role}</p>
       </div>
     </section>
   );

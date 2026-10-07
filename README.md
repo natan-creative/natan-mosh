@@ -7,13 +7,15 @@ Next.js, עברית RTL. כל התוכן נמצא בקובץ אחד: `content/si
 
 - **עבודות (Selected Work):** כל עבודה היא אובייקט. `type: "case"` מקבלת Case Study מלא
   (Brief / Challenge / Idea / Execution / Result), `type: "idea"` מקבלת עמוד קצר.
-  `layout` קובע את המקום בגריד (`major` / `side` / `mid` / `small`), `ratio` את יחס התמונה,
-  `accent` את צבע הפרויקט.
+  `kind` הוא מה שמופיע מתחת לכרטיס (קמפיין / קונספט), `focus` קובע איזה חלק מהתמונה
+  נשאר בחיתוך לכרטיס, `accent` הוא צבע הפרויקט בעמוד ה-Case.
 - **תמונות:** לשים ב-`public/work/` ולהפנות: `img("file-name", "תיאור לנגישות")`.
   next/image דואג ל-AVIF/WebP ולגדלים.
 - **לוגואים:** `public/logos/` ← בכרטיס דיגיטל: `face: "logo", logo: "/logos/client.svg"`.
 - **וידאו:** `{ kind: "embed", src: "https://player.vimeo.com/video/..." }`.
-- **Hero:** `hero.line` (החלק ב-`struck` נמחק בקו אדום), חלופות בהערה.
+- **Hero:** `hero.headline` (הכותרת באנגלית), `hero.note` (הפתק בכתב יד), `hero.image`.
+- **Naming:** כל שם מקבל `style` שקובע איך ה-wordmark נראה (`black` / `heavy` / `serif` / `spaced` / `wide`).
+  ארבעה ראשונים מוצגים, השאר נפתחים ב"לכל השמות".
 - **קריצות:** `winks`. לא יותר משלוש.
 
 ## הרצה מקומית

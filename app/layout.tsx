@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Frank_Ruhl_Libre, Heebo } from "next/font/google";
+import { Bebas_Neue, Frank_Ruhl_Libre, Gveret_Levin, Heebo, Secular_One } from "next/font/google";
 import { site } from "@/content/site";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Loader } from "@/components/Loader";
@@ -7,11 +7,13 @@ import { Cursor } from "@/components/Cursor";
 import { Reveal } from "@/components/Reveal";
 import "./globals.css";
 
-const display = Frank_Ruhl_Libre({
-  variable: "--font-display",
-  subsets: ["hebrew", "latin"],
-  weight: ["300", "400", "500", "700", "900"],
-});
+// כותרות באנגלית: condensed, חזק
+const cond = Bebas_Neue({ variable: "--font-cond", subsets: ["latin"], weight: "400" });
+// הפתק בכתב יד
+const hand = Gveret_Levin({ variable: "--font-hand", subsets: ["hebrew", "latin"], weight: "400" });
+// wordmarks באזור ה-Naming
+const serif = Frank_Ruhl_Libre({ variable: "--font-serif", subsets: ["hebrew", "latin"], weight: ["400", "500"] });
+const heavy = Secular_One({ variable: "--font-heavy", subsets: ["hebrew", "latin"], weight: "400" });
 
 const body = Heebo({
   variable: "--font-body",
@@ -32,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="he"
       dir="rtl"
-      className={`${display.variable} ${body.variable}`}
+      className={`${body.variable} ${cond.variable} ${hand.variable} ${serif.variable} ${heavy.variable}`}
       suppressHydrationWarning
     >
       <head>
