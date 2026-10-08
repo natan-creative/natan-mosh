@@ -32,7 +32,7 @@ export default function DigitalEditor() {
 
   return (
     <>
-      <PageHeader title="דיגיטל ורעיונות" intro="רוחב העבודה השוטפת. לכל עבודה: בעיה → רעיון → ביצוע." actions={<Button variant="primary" onClick={add}>+ הוסף עבודה</Button>} />
+      <PageHeader title="דיגיטל ורעיונות" intro="לוגואים של לקוחות, או עבודות עם בעיה → רעיון → ביצוע. משבצת בלי טקסטים מוצגת כלוגו." actions={<Button variant="primary" onClick={add}>+ הוסף עבודה</Button>} />
       <Tabs value={tab} onChange={setTab} tabs={[{ id: "content", label: "תוכן" }, { id: "design", label: "עיצוב" }]} />
 
       {tab === "design" ? (
@@ -48,6 +48,7 @@ export default function DigitalEditor() {
         <>
           <Card title="כותרות האזור">
             <TextInput label="כותרת" dir="ltr" value={c.digital.title} onChange={(v) => update((d) => void (d.digital.title = v), "digital.title")} />
+            <TextArea label="טקסט מתחת לכותרת" hint="לא חובה" rows={2} value={c.digital.intro} onChange={(v) => update((d) => void (d.digital.intro = v), "digital.intro")} />
             <TextInput label="טקסט הקישור" value={c.digital.linkLabel} onChange={(v) => update((d) => void (d.digital.linkLabel = v), "digital.link")} />
           </Card>
           {items.length === 0 ? (
@@ -96,7 +97,7 @@ export default function DigitalEditor() {
                       <TextArea label="רעיון" hint="הרעיון במשפט" rows={2} value={it.idea} onChange={field(it, "idea")} />
                       <TextArea label="ביצוע" hint="מה יצא בפועל" rows={2} value={it.execution} onChange={field(it, "execution")} />
                       <LinkInput label="קישור" hint="לא חובה" value={it.link} onChange={field(it, "link")} />
-                      <MediaField label="תמונה או סרטון" ratio="1/1" value={it.media} onChange={(m) => update((d) => void (d.digital.items[i].media = m))} />
+                      <MediaField label="תמונה, לוגו או סרטון" ratio="1/1" value={it.media} onChange={(m) => update((d) => void (d.digital.items[i].media = m))} />
                     </div>
                   )}
                 </div>

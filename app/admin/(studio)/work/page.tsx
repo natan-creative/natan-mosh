@@ -7,7 +7,8 @@ import { Thumb } from "@/components/admin/MediaLibrary";
 import { move, SortableList } from "@/components/admin/SortableList";
 import { ItemActions, newId } from "@/components/admin/fields";
 import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
-import { Button, Card, EmptyState, PageHeader, TextInput } from "@/components/admin/ui";
+import { Button, Card, EmptyState, NumberInput, PageHeader, Select, TextInput } from "@/components/admin/ui";
+import { RATIOS, WORK_COLUMNS } from "@/lib/content/limits";
 
 export default function WorkList() {
   const { content: c, update } = useStudio();
@@ -35,6 +36,12 @@ export default function WorkList() {
       <Card title="כותרות האזור">
         <TextInput label="כותרת" dir="ltr" value={c.work.title} onChange={(v) => update((d) => void (d.work.title = v), "work.title")} />
         <TextInput label="טקסט הקישור" value={c.work.linkLabel} onChange={(v) => update((d) => void (d.work.linkLabel = v), "work.link")} />
+      </Card>
+      <Card title="הגריד">
+        <div className="ad-cols">
+          <NumberInput label="עבודות בשורה (במחשב)" value={c.work.columns} min={WORK_COLUMNS.min} max={WORK_COLUMNS.max} onChange={(v) => update((d) => void (d.work.columns = v))} />
+          <Select label="צורת הכרטיס" value={c.work.cardRatio} onChange={(v) => update((d) => void (d.work.cardRatio = v))} options={RATIOS} />
+        </div>
       </Card>
 
       {projects.length === 0 ? (

@@ -44,7 +44,7 @@ export default function ProjectEditor() {
       const x = d.work.projects.find((x) => x.id === id);
       if (x) x[k] = v;
     }, `p.${id}.${String(k)}`);
-  const text = (k: "title" | "subtitle" | "kind" | "category" | "client" | "year" | "role" | "summary" | "brief" | "challenge" | "idea" | "ideaMore" | "execution" | "result" | "credits") => (v: string) => set(k, v);
+  const text = (k: "title" | "subtitle" | "kind" | "category" | "client" | "year" | "role" | "summary" | "brief" | "challenge" | "insight" | "idea" | "ideaMore" | "execution" | "myPart" | "result" | "credits") => (v: string) => set(k, v);
   const isCase = p.type === "case";
 
   return (
@@ -97,20 +97,37 @@ export default function ProjectEditor() {
             <Card title="הסיפור" hint="כל חלק שנשאר ריק פשוט לא יופיע.">
               <TextArea label="הבריף: מה ביקשו?" value={p.brief} onChange={text("brief")} />
               <TextArea label="האתגר: מה באמת היה צריך לפתור?" value={p.challenge} onChange={text("challenge")} />
+              <TextArea label="התובנה" value={p.insight} onChange={text("insight")} />
               <TextArea label="הרעיון: במשפט אחד" value={p.idea} onChange={text("idea")} />
               <TextArea label="הרחבה על הרעיון" value={p.ideaMore} onChange={text("ideaMore")} />
               <TextArea label="הביצוע: איך זה יצא לעולם" value={p.execution} onChange={text("execution")} />
+              <TextArea label="החלק שלי" value={p.myPart} onChange={text("myPart")} />
               <TextArea label="התוצאה: מה יצא מזה" value={p.result} onChange={text("result")} />
               <TextArea label="מספרים" hint="מספר אחד בכל שורה (למשל: 2.4M צפיות)" rows={3} value={p.stats.join("\n")} onChange={(v) => set("stats", v.split("\n"))} />
             </Card>
           ) : (
             <Card title="הרעיון">
+              <TextArea label="האתגר" hint="לא חובה" value={p.challenge} onChange={text("challenge")} />
+              <TextArea label="התובנה" hint="לא חובה" value={p.insight} onChange={text("insight")} />
               <TextArea label="הרעיון במשפט אחד" value={p.idea} onChange={text("idea")} />
+              <TextArea label="הרחבה" value={p.ideaMore} onChange={text("ideaMore")} />
+              <TextArea label="החלק שלי" value={p.myPart} onChange={text("myPart")} />
             </Card>
           )}
           <Card title="נוסף">
             <TextArea label="קרדיטים" hint="שורה לכל אחד" value={p.credits} onChange={text("credits")} />
-            <LinkInput label="קישור חיצוני" hint="לסרט, לכתבה, לאתר הקמפיין" value={p.link} onChange={(v) => set("link", v)} />
+            <div className="ad-field is-wide">
+              <span className="ad-label">קישורים</span>
+              <p className="ad-hint">לסרט, לכתבה, לעמוד האירוע. מופיעים ככפתורים בסוף העמוד.</p>
+              {p.links.map((l, li) => (
+                <div key={l.id} className="ad-link-row">
+                  <TextInput label="טקסט הכפתור" value={l.label} onChange={(v) => set("links", p.links.map((x, j) => (j === li ? { ...x, label: v } : x)))} />
+                  <LinkInput label="כתובת" value={l.href} onChange={(v) => set("links", p.links.map((x, j) => (j === li ? { ...x, href: v } : x)))} />
+                  <ItemActions kind="קישור" name={l.label} onDelete={() => set("links", p.links.filter((x) => x.id !== l.id))} />
+                </div>
+              ))}
+              <Button onClick={() => set("links", [...p.links, { id: newId("l"), label: "לצפייה בעבודה", href: "" }])}>+ הוסף קישור</Button>
+            </div>
             <TextInput label="כתובת העמוד" hint={`האתר/work/${p.slug} · אותיות באנגלית, מספרים ומקפים`} dir="ltr" value={p.slug} onChange={(v) => set("slug", v.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} />
           </Card>
         </>
@@ -119,7 +136,10 @@ export default function ProjectEditor() {
       {tab === "media" && (
         <>
           <Card title="תמונה ראשית" hint="מופיעה בכרטיס ובראש עמוד העבודה. אפשר גם סרטון.">
-            <MediaField label="מדיה ראשית" ratio="3/4" value={p.cover} onChange={(m) => set("cover", m)} />
+            <MediaField label="מדיה ראשית" ratio={c.work.cardRatio} value={p.cover} onChange={(m) => set("cover", m)} allowEmbed />
+          </Card>
+          <Card title="לוגו" hint="לוגו הלקוח או הפרויקט. מופיע בראש עמוד העבודה.">
+            <MediaField label="לוגו" kind="image" ratio="3/1" value={p.logo} onChange={(m) => set("logo", m)} />
           </Card>
           <Card
             title="גלריה"
@@ -142,7 +162,7 @@ export default function ProjectEditor() {
                     update((d) => fn(d.work.projects.find((x) => x.id === id)!.gallery[gi]), `g.${g.id}`);
                   return (
                     <div className="ad-gallery-item">
-                      <MediaField label={`פריט ${gi + 1}`} ratio={g.ratio} value={g.media} onChange={(m) => (m ? patch((x) => void (x.media = m)) : update((d) => {
+                      <MediaField label={`פריט ${gi + 1}`} ratio={g.ratio} allowEmbed value={g.media} onChange={(m) => (m ? patch((x) => void (x.media = m)) : update((d) => {
                         const x = d.work.projects.find((x) => x.id === id)!;
                         x.gallery = x.gallery.filter((y) => y.id !== g.id);
                       }))} />

@@ -23,11 +23,12 @@ export function mediaStyle(m: MediaRef): React.CSSProperties {
   };
 }
 
-// מסגרת ביחס קבוע + התוכן בפנים. תמונות דרך next/image (AVIF/WebP, lazy, srcset), וידאו lazy.
+// מסגרת ביחס קבוע + התוכן בפנים. תמונות דרך next/image (AVIF/WebP, lazy, srcset), וידאו lazy,
+// וסרטונים מ-YouTube/Vimeo ב-iframe שנטען רק כשמתקרבים אליו.
 export function Media({ media, ratio, sizes, priority, className = "", placeholder = "" }: Props) {
   const natural = media?.fit === "original" && media.width && media.height ? `${media.width} / ${media.height}` : null;
   return (
-    <div className={`media ${className}`} style={{ aspectRatio: natural ?? ratio.replace("/", " / ") }}>
+    <div className={`media ${className}`} data-fit={media?.fit === "contain" || media?.fit === "original" ? "contain" : undefined} style={{ aspectRatio: natural ?? ratio.replace("/", " / ") }}>
       {media?.kind === "image" && (
         <Image
           src={media.src}
@@ -40,6 +41,16 @@ export function Media({ media, ratio, sizes, priority, className = "", placehold
         />
       )}
       {media?.kind === "video" && <LazyVideo media={media} style={mediaStyle(media)} eager={priority} />}
+      {media?.kind === "embed" && (
+        <iframe
+          src={media.src}
+          title={media.alt || "וידאו"}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      )}
       {!media && placeholder && <span className="media-placeholder">{placeholder}</span>}
     </div>
   );

@@ -27,10 +27,12 @@ export const LINE_HEIGHT = { min: 0.8, max: 2, step: 0.05 };
 export const LETTER_SPACING = { min: -0.05, max: 0.2, step: 0.005 };
 
 export const DIGITAL_COLUMNS = {
-  desktop: { min: 2, max: 5 },
-  tablet: { min: 2, max: 3 },
-  mobile: { min: 1, max: 2 },
+  desktop: { min: 2, max: 8 },
+  tablet: { min: 2, max: 4 },
+  mobile: { min: 1, max: 3 },
 };
+
+export const WORK_COLUMNS = { min: 2, max: 4 };
 
 export const ZOOM = { min: 1, max: 2, step: 0.05 };
 

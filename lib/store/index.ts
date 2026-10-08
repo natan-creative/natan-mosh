@@ -34,12 +34,12 @@ export async function getDraftContent(): Promise<SiteContent> {
 }
 
 /** הקבצים שמגיעים עם האתר (public/work), מוצגים בספרייה לקריאה בלבד */
-export const builtinMedia: MediaAsset[] = (builtin as { name: string; width: number; height: number; size: number }[]).map((f) => ({
+export const builtinMedia: MediaAsset[] = (builtin as { name: string; kind?: "image" | "video"; width: number; height: number; size: number }[]).map((f) => ({
   id: `static:/work/${f.name}`,
-  kind: "image",
+  kind: f.kind ?? "image",
   src: `/work/${f.name}`,
   name: f.name,
-  mime: "image/webp",
+  mime: f.kind === "video" ? "video/mp4" : "image/webp",
   size: f.size,
   width: f.width,
   height: f.height,

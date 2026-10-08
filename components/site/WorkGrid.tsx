@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Project } from "@/lib/content/types";
+import type { Project, Ratio } from "@/lib/content/types";
 import { Media } from "./Media";
 
 export const pad = (n: number) => String(n).padStart(2, "0");
@@ -12,9 +12,9 @@ export const pad = (n: number) => String(n).padStart(2, "0");
 export const morphStyle = (id: string): React.CSSProperties =>
   ({ viewTransitionName: `work-${id}`, viewTransitionClass: "morph" }) as React.CSSProperties;
 
-export function WorkGrid({ projects }: { projects: Project[] }) {
+export function WorkGrid({ projects, columns = 3, ratio = "4/3" }: { projects: Project[]; columns?: number; ratio?: Ratio }) {
   return (
-    <div className="work-grid">
+    <div className="work-grid" style={{ ["--work-cols" as string]: columns }}>
       {projects.map((w, i) => (
         <Link
           key={w.id}
@@ -22,11 +22,11 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
           transitionTypes={["nav-forward"]}
           className="work-card"
           data-cursor={w.type === "case" ? "VIEW" : "IDEA →"}
-          style={{ ["--accent" as string]: w.design.accent, ["--i" as string]: i % 4 }}
+          style={{ ["--accent" as string]: w.design.accent, ["--i" as string]: i % columns }}
           data-reveal="up"
         >
           <div className="work-frame" style={morphStyle(w.id)}>
-            <Media media={w.cover} ratio="3/4" sizes="(max-width: 599px) 50vw, (max-width: 999px) 50vw, 25vw" priority={i < 2} className="work-media" placeholder={w.title} />
+            <Media media={w.cover} ratio={ratio} sizes={`(max-width: 999px) 100vw, ${Math.round(100 / columns)}vw`} priority={i < 2} className="work-media" placeholder={w.title} />
           </div>
           <h3 className="work-title">{w.title}</h3>
           <p className="work-kind">{w.kind}</p>

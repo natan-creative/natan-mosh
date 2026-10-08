@@ -1591,3 +1591,39 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+.ad-embed {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.ad-embed-row,
+.ad-link-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.ad-link-row > * {
+  flex: 1;
+  min-width: 160px;
+}
+
+.ad-link-row .ad-item-actions {
+  flex: none;
+}
+
+.ad-embed-thumb {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--a-ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}

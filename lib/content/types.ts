@@ -1,13 +1,13 @@
 // מבנה התוכן של האתר: מסמך אחד מובנה. העיצוב קבוע, התוכן והפרמטרים הוויזואליים כאן.
 // כל שדה חדש צריך ערך ב-defaults.ts, ו-normalize.ts משלים אותו למסמכים ישנים.
 
-export type MediaKind = "image" | "video";
+export type MediaKind = "image" | "video" | "embed";
 export type Fit = "cover" | "contain" | "original";
 export type Ratio = `${number}/${number}`;
 
 /** הפניה לקובץ מדיה + איך להציג אותו במקום הספציפי הזה */
 export type MediaRef = {
-  /** מזהה בספריית המדיה. "static:/work/x.webp" לקבצים שמגיעים עם האתר */
+  /** מזהה בספריית המדיה. "static:/work/x.webp" לקבצים שמגיעים עם האתר, "embed:<url>" לסרטון מ-YouTube/Vimeo */
   id: string;
   kind: MediaKind;
   src: string;
@@ -54,11 +54,17 @@ export type Project = {
   challenge: string;
   idea: string;
   ideaMore: string;
+  /** התובנה (לא חובה) */
+  insight: string;
   execution: string;
+  /** החלק שלי בעבודה */
+  myPart: string;
   result: string;
   stats: string[];
   credits: string;
-  link: string;
+  links: { id: string; label: string; href: string }[];
+  /** לוגו הלקוח / הפרויקט */
+  logo: MediaRef | null;
   cover: MediaRef | null;
   gallery: GalleryItem[];
   design: {
@@ -165,9 +171,11 @@ export type SiteContent = {
     video: MediaRef | null;
   };
   sections: { id: SectionId; visible: boolean }[];
-  work: { title: string; linkLabel: string; projects: Project[] };
+  work: { title: string; linkLabel: string; columns: number; cardRatio: Ratio; projects: Project[] };
   digital: {
     title: string;
+    /** משפט-שניים מתחת לכותרת (לא חובה) */
+    intro: string;
     linkLabel: string;
     homeLimit: number;
     columns: { desktop: number; tablet: number; mobile: number };
@@ -197,7 +205,7 @@ export type SiteContent = {
 /** פריט בספריית המדיה */
 export type MediaAsset = {
   id: string;
-  kind: MediaKind;
+  kind: Exclude<MediaKind, "embed">;
   src: string;
   name: string;
   mime: string;

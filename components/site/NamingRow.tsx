@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { SiteContent } from "@/lib/content/types";
+import { Media } from "./Media";
 import { SectionHead } from "./SectionHead";
 
 export function NamingRow({ naming }: { naming: SiteContent["naming"] }) {
@@ -25,9 +26,13 @@ export function NamingRow({ naming }: { naming: SiteContent["naming"] }) {
       <ul className="names">
         {list.map((n, i) => (
           <li key={n.id} className="name-cell" tabIndex={0} data-reveal="up" style={{ ["--i" as string]: i % 4 }}>
-            <span className={`name-mark is-${n.style}`} dir="auto">
-              {n.name}
-            </span>
+            {n.image ? (
+              <Media media={n.image} ratio="16/9" sizes="(max-width: 699px) 50vw, 25vw" className="name-logo" />
+            ) : (
+              <span className={`name-mark is-${n.style}`} dir="auto">
+                {n.name}
+              </span>
+            )}
             <span className="name-info">
               {[n.description, n.client, n.year].filter(Boolean).length > 0 && <span>{[n.description, n.client, n.year].filter(Boolean).join(" · ")}</span>}
               {n.note && <span>{n.note}</span>}

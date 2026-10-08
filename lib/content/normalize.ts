@@ -1,7 +1,7 @@
 // מקבל מסמך תוכן מכל מקור (DB, עורך, גרסה ישנה) ומחזיר מסמך תקין:
 // משלים שדות חסרים מברירת המחדל, ומצמיד כל ערך ויזואלי לטווח המותר.
 import { defaultContent, emptyDigital, emptyName, emptyProject } from "./defaults";
-import { DIGITAL_COLUMNS, FONTS, LETTER_SPACING, LINE_HEIGHT, TYPE_LIMITS, ZOOM } from "./limits";
+import { DIGITAL_COLUMNS, FONTS, LETTER_SPACING, LINE_HEIGHT, TYPE_LIMITS, WORK_COLUMNS, ZOOM } from "./limits";
 import { HEX } from "./contrast";
 import type { MediaRef, SectionId, SiteContent, TypeRole, TypeStyle } from "./types";
 
@@ -78,6 +78,10 @@ export function normalizeContent(raw: unknown): SiteContent {
   const slugs = new Set<string>();
   c.work.projects = c.work.projects.map((p, i) => {
     const full = merge(emptyProject(p.id, p.slug), p);
+    // גרסאות ישנות: קישור יחיד → רשימת קישורים
+    const legacy = (p as unknown as { link?: string }).link;
+    if (legacy && !full.links.length) full.links = [{ id: "l1", label: "לצפייה בעבודה", href: legacy }];
+    delete (full as unknown as { link?: string }).link;
     let slug = slugify(full.slug) || `work-${i + 1}`;
     while (slugs.has(slug)) slug = `${slug}-2`;
     slugs.add(slug);
@@ -85,6 +89,8 @@ export function normalizeContent(raw: unknown): SiteContent {
       ...full,
       slug,
       cover: media(full.cover),
+      logo: media(full.logo),
+      links: full.links.filter((l) => l && typeof l.href === "string"),
       gallery: full.gallery.map((g) => ({ ...g, media: media(g.media)! })).filter((g) => g.media),
       stats: full.stats.filter((s) => typeof s === "string"),
       design: { ...full.design, accent: color(full.design.accent, "#111110") },
@@ -95,11 +101,12 @@ export function normalizeContent(raw: unknown): SiteContent {
   c.naming.items = c.naming.items.map((x) => ({ ...merge(emptyName(x.id), x), image: media(x.image) }));
 
   c.digital.columns = {
-    desktop: Math.round(clamp(c.digital.columns.desktop, DIGITAL_COLUMNS.desktop.min, DIGITAL_COLUMNS.desktop.max, 5)),
-    tablet: Math.round(clamp(c.digital.columns.tablet, DIGITAL_COLUMNS.tablet.min, DIGITAL_COLUMNS.tablet.max, 3)),
-    mobile: Math.round(clamp(c.digital.columns.mobile, DIGITAL_COLUMNS.mobile.min, DIGITAL_COLUMNS.mobile.max, 2)),
+    desktop: Math.round(clamp(c.digital.columns.desktop, DIGITAL_COLUMNS.desktop.min, DIGITAL_COLUMNS.desktop.max, 8)),
+    tablet: Math.round(clamp(c.digital.columns.tablet, DIGITAL_COLUMNS.tablet.min, DIGITAL_COLUMNS.tablet.max, 4)),
+    mobile: Math.round(clamp(c.digital.columns.mobile, DIGITAL_COLUMNS.mobile.min, DIGITAL_COLUMNS.mobile.max, 3)),
   };
   c.digital.homeLimit = Math.round(clamp(c.digital.homeLimit, 1, 60, 10));
+  c.work.columns = Math.round(clamp(c.work.columns, WORK_COLUMNS.min, WORK_COLUMNS.max, 3));
   c.naming.visibleCount = Math.round(clamp(c.naming.visibleCount, 1, 24, 4));
 
   for (const k of Object.keys(d.theme.colors) as (keyof typeof d.theme.colors)[]) {

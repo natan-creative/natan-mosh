@@ -15,6 +15,22 @@ export function DigitalGrid({ items, columns }: { items: DigitalItem[]; columns:
     >
       {items.map((d, i) => {
         const isOpen = open === d.id;
+        const hasStory = Boolean(d.problem || d.idea || d.execution);
+        // בלי בעיה/רעיון/ביצוע: משבצת לוגו פשוטה, בלי אינטראקציה
+        if (!hasStory) {
+          return (
+            <article key={d.id} className="d-tile is-logo" data-reveal="up" style={{ ["--i" as string]: i % columns.desktop }}>
+              <div className="d-face">
+                <Media media={d.media} ratio="1/1" sizes={`(max-width: 599px) ${Math.round(100 / columns.mobile)}vw, (max-width: 1023px) ${Math.round(100 / columns.tablet)}vw, ${Math.round(100 / columns.desktop)}vw`} className="d-media" placeholder={d.title} />
+              </div>
+              {d.link && (
+                <a href={d.link} className="d-link" target="_blank" rel="noreferrer">
+                  {d.title} ←
+                </a>
+              )}
+            </article>
+          );
+        }
         return (
           <article key={d.id} className="d-tile" data-open={isOpen || undefined} data-reveal="up" style={{ ["--i" as string]: i % columns.desktop }}>
             <button

@@ -31,13 +31,14 @@ export function HomeView({ c }: { c: SiteContent }) {
               return (
                 <section key="work" id="work" className="section wrap" aria-label={c.work.title}>
                   <SectionHead title={c.work.title} action={{ href: "/work", label: c.work.linkLabel }} />
-                  <WorkGrid projects={visibleProjects(c)} />
+                  <WorkGrid projects={visibleProjects(c)} columns={c.work.columns} ratio={c.work.cardRatio} />
                 </section>
               );
             case "digital":
               return (
                 <section key="digital" id="digital" className="section wrap" aria-label={c.digital.title}>
-                  <SectionHead title={c.digital.title} action={{ href: "/work#digital", label: c.digital.linkLabel }} />
+                  <SectionHead title={c.digital.title} action={visibleDigital(c).length > c.digital.homeLimit ? { href: "/work#digital", label: c.digital.linkLabel } : undefined} />
+                  {c.digital.intro && <p className="section-intro">{c.digital.intro}</p>}
                   <DigitalGrid items={visibleDigital(c).slice(0, c.digital.homeLimit)} columns={c.digital.columns} />
                 </section>
               );
@@ -67,10 +68,11 @@ export function WorkIndexView({ c }: { c: SiteContent }) {
         </header>
         <section className="section wrap" aria-label={c.work.title}>
           <SectionHead title={c.work.title} />
-          <WorkGrid projects={visibleProjects(c)} />
+          <WorkGrid projects={visibleProjects(c)} columns={c.work.columns} ratio={c.work.cardRatio} />
         </section>
         <section id="digital" className="section wrap" aria-label={c.digital.title}>
           <SectionHead title={c.digital.title} />
+          {c.digital.intro && <p className="section-intro">{c.digital.intro}</p>}
           <DigitalGrid items={visibleDigital(c)} columns={c.digital.columns} />
         </section>
       </main>
@@ -109,9 +111,12 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
           <Link href="/#work" className="back text-link" transitionTypes={["nav-back"]}>
             → כל העבודות
           </Link>
-          <p className="case-num latin layer" style={{ ["--l" as string]: 0 }}>
-            {pad(i + 1)} {w.category && <span>/ {w.category}</span>}
-          </p>
+          <div className="case-top layer" style={{ ["--l" as string]: 0 }}>
+            <p className="case-num latin">
+              {pad(i + 1)} {w.category && <span>/ {w.category}</span>}
+            </p>
+            {w.logo && <Media media={w.logo} ratio="3/1" sizes="240px" className="case-logo" />}
+          </div>
           <h1 className="case-title layer" style={{ ["--l" as string]: 1 }}>
             {w.title}
           </h1>
@@ -145,37 +150,37 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
           )}
 
           <div className="chapters">
-            {isCase ? (
-              <>
-                {w.brief && (
-                  <Chapter label="THE BRIEF">
-                    <p className="lead">{w.brief}</p>
-                  </Chapter>
-                )}
-                {w.challenge && (
-                  <Chapter label="THE CHALLENGE">
-                    <p className="lead">{w.challenge}</p>
-                  </Chapter>
-                )}
-                {w.idea && (
-                  <Chapter label="THE IDEA">
-                    <p className="big-idea">{w.idea}</p>
-                    {w.ideaMore && <p className="body-text">{w.ideaMore}</p>}
-                  </Chapter>
-                )}
-                {w.execution && (
-                  <Chapter label="THE EXECUTION">
-                    <p className="lead">{w.execution}</p>
-                  </Chapter>
-                )}
-              </>
-            ) : (
-              (w.idea || w.summary) && (
-                <Chapter label="THE IDEA">
-                  {w.idea && <p className="big-idea">{w.idea}</p>}
-                  {w.summary && <p className="body-text">{w.summary}</p>}
-                </Chapter>
-              )
+            {w.brief && (
+              <Chapter label="THE BRIEF">
+                <p className="lead">{w.brief}</p>
+              </Chapter>
+            )}
+            {w.challenge && (
+              <Chapter label="THE CHALLENGE">
+                <p className="lead">{w.challenge}</p>
+              </Chapter>
+            )}
+            {w.insight && (
+              <Chapter label="THE INSIGHT">
+                <p className="lead">{w.insight}</p>
+              </Chapter>
+            )}
+            {(w.idea || (!isCase && w.summary)) && (
+              <Chapter label="THE IDEA">
+                {w.idea && <p className="big-idea" data-long={w.idea.length > 90 || undefined}>{w.idea}</p>}
+                {w.ideaMore && <p className="body-text">{w.ideaMore}</p>}
+                {!isCase && !w.idea && w.summary && <p className="lead">{w.summary}</p>}
+              </Chapter>
+            )}
+            {w.execution && (
+              <Chapter label="THE EXECUTION">
+                <p className="lead">{w.execution}</p>
+              </Chapter>
+            )}
+            {w.myPart && (
+              <Chapter label="MY ROLE">
+                <p className="lead">{w.myPart}</p>
+              </Chapter>
             )}
           </div>
 
@@ -205,7 +210,7 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
             </div>
           )}
 
-          {(w.credits || w.link) && (
+          {(w.credits || w.links.length > 0) && (
             <div className="case-extra" data-reveal="up">
               {w.credits && (
                 <div>
@@ -213,10 +218,15 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
                   <p className="body-text case-credits">{w.credits}</p>
                 </div>
               )}
-              {w.link && (
-                <a href={w.link} className="btn btn-secondary" target="_blank" rel="noreferrer">
-                  לצפייה בעבודה ←
-                </a>
+              {w.links.length > 0 && (
+                <div className="case-links">
+                  {w.links.map((l) => (
+                    <a key={l.id} href={l.href} className="btn btn-secondary" target="_blank" rel="noreferrer">
+                      {l.label} <span aria-hidden="true">←</span>
+                      <span className="sr-only">(נפתח בחלון חדש)</span>
+                    </a>
+                  ))}
+                </div>
               )}
             </div>
           )}

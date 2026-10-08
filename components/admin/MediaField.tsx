@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react";
 import { ZOOM } from "@/lib/content/limits";
 import { refFromAsset } from "@/lib/content/media-usage";
+import { toEmbed } from "@/lib/content/embed";
 import type { MediaKind, MediaRef } from "@/lib/content/types";
 import { MediaLibrary, Thumb, useUploader } from "./MediaLibrary";
 import { Button, Modal, Segmented, Slider, TextInput, Toggle } from "./ui";
@@ -102,6 +103,17 @@ function PosterPicker({ value, onChange }: { value?: string; onChange: (src?: st
 /** עריכת אופן ההצגה של מדיה במקום מסוים */
 export function MediaRefEditor({ value, onChange, ratio }: { value: MediaRef; onChange: (m: MediaRef) => void; ratio?: string }) {
   const set = (patch: Partial<MediaRef>) => onChange({ ...value, ...patch });
+  if (value.kind === "embed") {
+    return (
+      <div className="ad-ref-fields">
+        <p className="ad-hint" dir="ltr">
+          {value.src}
+        </p>
+        <TextInput label="תיאור לנגישות" hint="על מה הסרטון? קורא מסך יקריא את זה." value={value.alt} onChange={(alt) => set({ alt })} />
+        <TextInput label="כיתוב" hint="לא חובה" value={value.caption ?? ""} onChange={(caption) => set({ caption })} />
+      </div>
+    );
+  }
   return (
     <div className="ad-ref-editor">
       <FocalPicker media={value} value={value.focal ?? { x: 50, y: 50 }} onChange={(focal) => set({ focal })} ratio={ratio} />
@@ -141,9 +153,37 @@ type Props = {
   kind?: MediaKind;
   /** היחס שבו המדיה מוצגת באתר: לתצוגת החיתוך */
   ratio?: string;
+  /** לאפשר סרטון מ-YouTube / Vimeo לפי קישור */
+  allowEmbed?: boolean;
 };
 
-export function MediaField({ label, hint, value, onChange, kind, ratio }: Props) {
+function EmbedInput({ onAdd }: { onAdd: (m: MediaRef) => void }) {
+  const [url, setUrl] = useState("");
+  const [error, setError] = useState("");
+  const add = () => {
+    const e = toEmbed(url);
+    if (!e) return setError("לא זיהיתי קישור של YouTube או Vimeo.");
+    setError("");
+    setUrl("");
+    onAdd({ id: `embed:${e.src}`, kind: "embed", src: e.src, alt: "" });
+  };
+  return (
+    <div className="ad-embed">
+      <label className="ad-label" htmlFor="embed-url">
+        או קישור לסרטון ב-YouTube / Vimeo
+      </label>
+      <div className="ad-embed-row">
+        <input id="embed-url" className="ad-input" dir="ltr" placeholder="https://www.youtube.com/watch?v=..." value={url} onChange={(e) => setUrl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())} />
+        <Button onClick={add} disabled={!url.trim()}>
+          הוספה
+        </Button>
+      </div>
+      {error && <p className="ad-warning">{error}</p>}
+    </div>
+  );
+}
+
+export function MediaField({ label, hint, value, onChange, kind, ratio, allowEmbed }: Props) {
   const id = useId();
   const [picking, setPicking] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -180,6 +220,7 @@ export function MediaField({ label, hint, value, onChange, kind, ratio }: Props)
           hidden
           accept={kind === "video" ? "video/mp4,video/webm" : kind === "image" ? "image/jpeg,image/png,image/webp,image/avif,image/gif" : "image/jpeg,image/png,image/webp,image/avif,image/gif,video/mp4,video/webm"}
           onChange={async (e) => {
+            // העלאה ישירה מהשדה
             const f = e.target.files;
             if (f?.length) {
               const [a] = await upload(f);
@@ -197,8 +238,16 @@ export function MediaField({ label, hint, value, onChange, kind, ratio }: Props)
       ))}
 
       <Modal open={picking} onClose={() => setPicking(false)} title={`בחירת ${label}`} wide>
+        {allowEmbed && (
+          <EmbedInput
+            onAdd={(m) => {
+              onChange({ ...m, alt: value?.alt ?? "" });
+              setPicking(false);
+            }}
+          />
+        )}
         <MediaLibrary
-          kind={kind}
+          kind={kind === "embed" ? undefined : kind}
           onSelect={(a) => {
             onChange(refFromAsset(a, value));
             setPicking(false);

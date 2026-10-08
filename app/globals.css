@@ -657,8 +657,8 @@ ol {
 
 .work-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap);
+  grid-template-columns: repeat(var(--work-cols, 3), 1fr);
+  gap: var(--s-l) var(--gap);
 }
 
 .work-card {
@@ -711,6 +711,12 @@ ol {
   .work-grid {
     grid-template-columns: repeat(2, 1fr);
     row-gap: var(--s-m);
+  }
+}
+
+@media (max-width: 599px) {
+  .work-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1998,4 +2004,103 @@ html.a11y-still::view-transition-new(*) {
 
 .has-preview-banner body {
   padding-top: 30px;
+}
+
+/* =========================================================
+   תוכן אמיתי: לוגואים, תובנות, קישורים
+   ========================================================= */
+
+.section-intro {
+  max-width: 62ch;
+  margin: calc(var(--s-s) * -0.5) 0 var(--s-l);
+  color: var(--ink-2);
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+}
+
+/* תמונה שנכנסת כולה (לוגואים): בלי רקע, והלבן נבלע בצבע הנייר */
+.media[data-fit="contain"] {
+  background: var(--paper);
+}
+
+.media[data-fit="contain"] img {
+  mix-blend-mode: multiply;
+}
+
+/* קיר לוגואים של לקוחות: אחיד, בשחור-לבן. צבע חוזר במעבר עכבר. */
+.d-tile.is-logo .d-face {
+  aspect-ratio: 3 / 2;
+  background: transparent;
+  cursor: default;
+}
+
+.d-tile.is-logo .media {
+  background: var(--paper);
+}
+
+.d-tile.is-logo .media img {
+  padding: 9%;
+  filter: grayscale(1) contrast(1.15);
+  opacity: 0.85;
+  transition: filter 0.4s, opacity 0.4s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .d-tile.is-logo:hover .media img {
+    filter: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Naming: הלוגואים המעוצבים */
+.name-cell:has(.name-logo) {
+  height: auto;
+  padding: var(--s-s);
+}
+
+.name-logo {
+  width: min(320px, 100%);
+  background: var(--paper);
+}
+
+.name-logo img {
+  mix-blend-mode: multiply;
+  transition: transform 0.45s var(--ease);
+}
+
+.name-cell:has(.name-logo) .name-info {
+  bottom: 6px;
+  padding: 6px 8px;
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+}
+
+.name-cell:hover .name-logo img,
+.name-cell:focus-visible .name-logo img {
+  transform: translateY(-8px);
+}
+
+/* עמוד העבודה */
+.case-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-m);
+}
+
+.case-logo {
+  width: clamp(110px, 12vw, 180px);
+  background: var(--paper);
+}
+
+.big-idea[data-long] {
+  font-size: clamp(26px, 2.8vw, 44px);
+  line-height: 1.2;
+  max-width: 32ch;
+}
+
+.case-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }

@@ -6,6 +6,7 @@ import { ACCEPT_ATTR } from "@/lib/admin/media-rules";
 import { replaceFile, uploadFile, UploadError } from "@/lib/admin/upload";
 import { mediaUsage, removeMediaRefs, replaceMediaRefs, usageOf } from "@/lib/content/media-usage";
 import type { MediaAsset, MediaKind } from "@/lib/content/types";
+import { embedThumb } from "@/lib/content/embed";
 import { useStudio } from "./StudioContext";
 import { Button, EmptyState, useConfirm } from "./ui";
 
@@ -21,7 +22,12 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)}MB` : `${Math.round(n / 1024)}KB`);
 
-export function Thumb({ asset, style }: { asset: Pick<MediaAsset, "kind" | "src" | "name">; style?: React.CSSProperties }) {
+export function Thumb({ asset, style }: { asset: { kind: MediaKind; src: string; name: string }; style?: React.CSSProperties }) {
+  if (asset.kind === "embed") {
+    const t = embedThumb(asset.src);
+    // eslint-disable-next-line @next/next/no-img-element
+    return t ? <img src={t} alt="" loading="lazy" style={style} /> : <span className="ad-embed-thumb">וידאו</span>;
+  }
   return asset.kind === "video" ? (
     <video src={asset.src} muted playsInline preload="metadata" aria-hidden="true" style={style} />
   ) : (
@@ -61,7 +67,7 @@ export function useUploader() {
   return { upload, busy, errors };
 }
 
-export function Dropzone({ onFiles, busy, kind, compact }: { onFiles: (f: FileList) => void; busy: number; kind?: MediaKind; compact?: boolean }) {
+export function Dropzone({ onFiles, busy, kind, compact }: { onFiles: (f: FileList) => void; busy: number; kind?: MediaAsset["kind"]; compact?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   return (
@@ -104,7 +110,7 @@ export function Dropzone({ onFiles, busy, kind, compact }: { onFiles: (f: FileLi
 type LibraryProps = {
   /** מצב בחירה: לחיצה על פריט בוחרת אותו */
   onSelect?: (a: MediaAsset) => void;
-  kind?: MediaKind;
+  kind?: MediaAsset["kind"];
 };
 
 export function MediaLibrary({ onSelect, kind }: LibraryProps) {
