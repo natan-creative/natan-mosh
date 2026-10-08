@@ -29,6 +29,8 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: "/admin/style", label: "סגנון וצבעים" },
       { href: "/admin/typography", label: "טיפוגרפיה" },
+      { href: "/admin/buttons", label: "כפתורים" },
+      { href: "/admin/elements", label: "מיקום והסתרה" },
       { href: "/admin/layout", label: "סדר ופריסה" },
       { href: "/admin/motion", label: "תנועה" },
     ],
@@ -95,7 +97,8 @@ export function usePublishFlow() {
 export const openPreview = (path = "/") => window.open(`/preview?path=${encodeURIComponent(path)}`, "_blank", "noopener");
 
 function PreviewPane() {
-  const { content, previewPath, device } = useStudio();
+  const { content, previewPath, device, update, selectedEl, setSelectedEl } = useStudio();
+  const editing = usePathname() === "/admin/elements";
   const frame = useRef<HTMLIFrameElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const ready = useRef(false);
@@ -113,7 +116,16 @@ function PreviewPane() {
         ready.current = true;
         post({ type: "nk:content", content });
         post({ type: "nk:navigate", path: previewPath });
+        post({ type: "nk:edit", enabled: editing, selected: selectedEl });
       }
+      if (e.data?.type === "nk:move") {
+        const { id, x, y } = e.data;
+        update((d) => {
+          const k = id as keyof typeof d.elements;
+          d.elements[k] = { ...d.elements[k], x, y };
+        }, `el.${id}`);
+      }
+      if (e.data?.type === "nk:select") setSelectedEl(e.data.id);
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
@@ -129,6 +141,10 @@ function PreviewPane() {
   useEffect(() => {
     if (ready.current) post({ type: "nk:navigate", path: previewPath });
   }, [previewPath]);
+
+  useEffect(() => {
+    if (ready.current) post({ type: "nk:edit", enabled: editing, selected: selectedEl });
+  }, [editing, selectedEl]);
 
   useEffect(() => {
     const el = box.current;

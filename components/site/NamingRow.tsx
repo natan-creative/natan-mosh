@@ -3,9 +3,10 @@
 import { useState } from "react";
 import type { SiteContent } from "@/lib/content/types";
 import { Media } from "./Media";
+import { el, type Elements } from "@/lib/elements";
 import { SectionHead } from "./SectionHead";
 
-export function NamingRow({ naming }: { naming: SiteContent["naming"] }) {
+export function NamingRow({ naming, els = {} }: { naming: SiteContent["naming"]; els?: Elements }) {
   const [all, setAll] = useState(false);
   const items = naming.items.filter((n) => !n.hidden);
   const FIRST = naming.visibleCount;
@@ -15,6 +16,7 @@ export function NamingRow({ naming }: { naming: SiteContent["naming"] }) {
     <>
       <SectionHead
         title={naming.title}
+        el={el(els, "naming.head")}
         action={
           items.length > FIRST && (
             <button type="button" className="section-action" aria-expanded={all} onClick={() => setAll((v) => !v)}>

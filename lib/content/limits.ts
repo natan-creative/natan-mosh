@@ -1,5 +1,5 @@
 // Design-system guardrails: מה מותר לשנות ובאיזה טווח. גם ה-UI וגם normalize משתמשים בזה.
-import type { ColorTokens, FontId, PresetId, Theme, TypeRole } from "./types";
+import type { ButtonStyle, ColorTokens, ElementId, FontId, PresetId, Theme, TypeRole } from "./types";
 
 export const FONTS: Record<FontId, { label: string; cssVar: string; weights: number[]; hebrew: boolean }> = {
   bebas: { label: "Bebas Neue (אנגלית בלבד)", cssVar: "--font-cond", weights: [400], hebrew: false },
@@ -36,6 +36,52 @@ export const WORK_COLUMNS = { min: 2, max: 4 };
 
 export const ZOOM = { min: 1, max: 2, step: 0.05 };
 
+export const BUTTON_LIMITS = {
+  radius: { min: 0, max: 40, step: 1 },
+  paddingX: { min: 10, max: 48, step: 1 },
+  paddingY: { min: 6, max: 24, step: 1 },
+  fontSize: { min: 12, max: 20, step: 1 },
+  letterSpacing: { min: -0.02, max: 0.2, step: 0.005 },
+  borderWidth: { min: 0, max: 3, step: 1 },
+  weights: [400, 500, 600, 700, 800],
+};
+
+export const defaultButtons: ButtonStyle = {
+  radius: 0,
+  paddingX: 26,
+  paddingY: 13,
+  fontSize: 15,
+  weight: 600,
+  uppercase: false,
+  letterSpacing: 0,
+  borderWidth: 1,
+  shadow: "none",
+  hover: "darken",
+};
+
+/** כמה רחוק אפשר להזיז אלמנט מהמקום הטבעי שלו (פיקסלים, בדסקטופ) */
+export const OFFSET = { x: 480, y: 360 };
+
+export const ELEMENTS: { id: ElementId; label: string; group: string; path: string; hideHint?: string }[] = [
+  { id: "hero.headline", label: "כותרת ראשית", group: "פתיחה", path: "/" },
+  { id: "hero.note", label: "פתק בכתב יד", group: "פתיחה", path: "/" },
+  { id: "hero.arrow", label: "החץ", group: "פתיחה", path: "/" },
+  { id: "hero.photo", label: "התמונה", group: "פתיחה", path: "/" },
+  { id: "hero.rule", label: "הקו הקצר", group: "פתיחה", path: "/" },
+  { id: "hero.role", label: "התפקיד", group: "פתיחה", path: "/" },
+  { id: "hero.cta", label: "הכפתור", group: "פתיחה", path: "/" },
+  { id: "work.head", label: "כותרת העבודות", group: "דף הבית", path: "/#work" },
+  { id: "digital.intro", label: "הטקסט בסושיאל", group: "דף הבית", path: "/#digital" },
+  { id: "naming.head", label: "כותרת השמות", group: "דף הבית", path: "/#naming" },
+  { id: "about.text", label: "טקסט אודות", group: "אודות ויצירת קשר", path: "/#about" },
+  { id: "about.image", label: "הלוגו באודות", group: "אודות ויצירת קשר", path: "/#about" },
+  { id: "contact.block", label: "פרטי הקשר", group: "אודות ויצירת קשר", path: "/#contact" },
+  { id: "contact.form", label: "טופס יצירת קשר", group: "אודות ויצירת קשר", path: "/#contact" },
+  { id: "footer.wink", label: "הקריצה בתחתית", group: "אודות ויצירת קשר", path: "/#contact" },
+  { id: "fab.whatsapp", label: "כפתור וואטסאפ", group: "כפתורים צפים", path: "/" },
+  { id: "fab.a11y", label: "כפתור נגישות", group: "כפתורים צפים", path: "/", hideHint: "לא חובה לפי החוק, אבל מקובל. מומלץ להשאיר." },
+];
+
 export const RATIOS: { value: `${number}/${number}`; label: string }[] = [
   { value: "16/9", label: "רחב 16:9" },
   { value: "3/2", label: "3:2" },
@@ -71,6 +117,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     hint: "נייר, דיו וצהוב. ברירת המחדל.",
     theme: {
       grain: true,
+      buttons: defaultButtons,
       colors: { background: "#eeece7", text: "#111110", muted: "#6b6862", accent: "#f2c200", border: "#cdc9c1", button: "#111110", buttonText: "#eeece7", hover: "#33322f" },
       typography: base,
     },
@@ -80,6 +127,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     hint: "צהוב חזק, שחור, בלי פשרות.",
     theme: {
       grain: false,
+      buttons: { ...defaultButtons, uppercase: true, letterSpacing: 0.06, borderWidth: 2, hover: "invert" },
       colors: { background: "#f2c200", text: "#111110", muted: "#3b3300", accent: "#111110", border: "#111110", button: "#111110", buttonText: "#f2c200", hover: "#33322f" },
       typography: { ...base, title: { ...base.title, family: "secular", weight: 400 } },
     },
@@ -89,6 +137,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     hint: "לבן, שקט, הרבה אוויר.",
     theme: {
       grain: false,
+      buttons: { ...defaultButtons, radius: 40, paddingX: 28, weight: 500, hover: "lift", shadow: "soft" },
       colors: { background: "#ffffff", text: "#161616", muted: "#6e6e6e", accent: "#161616", border: "#e4e4e4", button: "#161616", buttonText: "#ffffff", hover: "#3d3d3d" },
       typography: {
         ...base,
@@ -102,6 +151,7 @@ export const PRESETS: Record<PresetId, { label: string; hint: string; theme: Omi
     hint: "לילה. העבודות זוהרות.",
     theme: {
       grain: true,
+      buttons: { ...defaultButtons, radius: 4 },
       colors: { background: "#121211", text: "#efece6", muted: "#a29e97", accent: "#f2c200", border: "#33322f", button: "#efece6", buttonText: "#121211", hover: "#cfcbc3" },
       typography: base,
     },

@@ -3,6 +3,7 @@ import type { SiteContent } from "@/lib/content/types";
 import { ContactForm } from "./ContactForm";
 import { Media } from "./Media";
 import { Wink } from "./Wink";
+import { el, shown } from "@/lib/elements";
 
 const tel = (phone: string) => "+972" + phone.replace(/\D/g, "").replace(/^972/, "").replace(/^0/, "");
 const real = (s: string) => s && !s.startsWith("[");
@@ -36,18 +37,24 @@ export function AboutContact({ c, showAbout = true, showContact = true, withFoot
           {showAbout && (
             <div id="about" className="ac-about" data-reveal="up">
               <h2 className="section-title latin">{about.title}</h2>
-              <div className="ac-body">
-                {about.body.split("\n").filter(Boolean).map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-                {about.quote && <blockquote className="ac-quote">{about.quote}</blockquote>}
-              </div>
-              {about.image && <Media media={about.image} ratio="4/5" sizes="(max-width: 767px) 100vw, 30vw" className="ac-image" />}
+              {shown(c.elements, "about.text") && (
+                <div className="ac-body" {...el(c.elements, "about.text")}>
+                  {about.body.split("\n").filter(Boolean).map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                  {about.quote && <blockquote className="ac-quote">{about.quote}</blockquote>}
+                </div>
+              )}
+              {about.image && shown(c.elements, "about.image") && (
+                <div className="ac-image-wrap" {...el(c.elements, "about.image")}>
+                  <Media media={about.image} ratio="1/1" sizes="(max-width: 767px) 100vw, 30vw" className="ac-image" />
+                </div>
+              )}
             </div>
           )}
 
-          {showContact && (
-            <div id="contact" className="ac-contact" data-reveal="up">
+          {showContact && shown(c.elements, "contact.block") && (
+            <div id="contact" className="ac-contact" data-reveal="up" {...el(c.elements, "contact.block")}>
               <h2 className="section-title latin">{contact.title}</h2>
               {contact.cta && <p className="ac-cta">{contact.cta}</p>}
               <a href={`mailto:${contact.email}`} className="ac-mail latin">
@@ -89,10 +96,14 @@ export function SiteFooter({ c, withForm = true }: { c: SiteContent; withForm?: 
   return (
     <>
       <div className="wrap">
-        {withForm && <ContactForm />}
+        {withForm && shown(c.elements, "contact.form") && <ContactForm form={c.contact.form} el={el(c.elements, "contact.form")} />}
         <footer className="footer">
           <span className="latin">{c.footer.copyright}</span>
-          {c.footer.wink.idle && <Wink idle={c.footer.wink.idle} reveal={c.footer.wink.reveal} />}
+          {c.footer.wink.idle && shown(c.elements, "footer.wink") && (
+            <span {...el(c.elements, "footer.wink")}>
+              <Wink idle={c.footer.wink.idle} reveal={c.footer.wink.reveal} />
+            </span>
+          )}
           <nav className="footer-nav" aria-label="ניווט תחתון">
             {c.footer.nav.map((n) => (
               <Link key={n.id} href={n.href} transitionTypes={["nav-back"]}>

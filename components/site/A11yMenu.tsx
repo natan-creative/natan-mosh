@@ -21,7 +21,7 @@ function load(): A11yState {
   }
 }
 
-export function A11yMenu() {
+export function A11yMenu({ el }: { el?: { "data-el": string; style: React.CSSProperties } }) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<A11yState>(a11yDefaults);
   const [ready, setReady] = useState(false);
@@ -73,6 +73,7 @@ export function A11yMenu() {
         ref={button}
         type="button"
         className="fab fab-a11y"
+        {...el}
         aria-label="תפריט נגישות"
         aria-expanded={open}
         aria-controls="a11y-panel"

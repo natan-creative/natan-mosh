@@ -31,6 +31,9 @@ type Studio = {
   setPreviewPath: (path: string) => void;
   device: Device;
   setDevice: (d: Device) => void;
+  /** אלמנט שנבחר בגרירה ב-Preview */
+  selectedEl: string | null;
+  setSelectedEl: (id: string | null) => void;
   backend: "supabase" | "local";
   notify: (msg: string) => void;
   toast: string | null;
@@ -67,6 +70,7 @@ export function StudioProvider({
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [previewPath, setPreviewPath] = useState("/");
   const [device, setDevice] = useState<Device>("desktop");
+  const [selectedEl, setSelectedEl] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const last = useRef({ key: "", at: 0 });
@@ -209,6 +213,8 @@ export function StudioProvider({
     setPreviewPath,
     device,
     setDevice,
+    selectedEl,
+    setSelectedEl,
     backend,
     notify,
     toast,

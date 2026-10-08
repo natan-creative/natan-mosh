@@ -12,6 +12,7 @@ import { PageTransition } from "./PageTransition";
 import { Parallax } from "./Parallax";
 import { SectionHead } from "./SectionHead";
 import { morphStyle, pad, WorkGrid } from "./WorkGrid";
+import { el, shown } from "@/lib/elements";
 
 const visibleProjects = (c: SiteContent) => c.work.projects.filter((p) => !p.hidden);
 const visibleDigital = (c: SiteContent) => c.digital.items.filter((d) => !d.hidden);
@@ -23,14 +24,14 @@ export function HomeView({ c }: { c: SiteContent }) {
   return (
     <PageTransition>
       <main id="main">
-        <Hero hero={c.hero} brand={c.brand} />
+        <Hero hero={c.hero} brand={c.brand} els={c.elements} />
         {c.sections.map((s, i) => {
           if (!s.visible) return null;
           switch (s.id) {
             case "work":
               return (
                 <section key="work" id="work" className="section wrap" aria-label={c.work.title}>
-                  <SectionHead title={c.work.title} action={{ href: "/work", label: c.work.linkLabel }} />
+                  <SectionHead title={c.work.title} action={{ href: "/work", label: c.work.linkLabel }} el={el(c.elements, "work.head")} />
                   <WorkGrid projects={visibleProjects(c)} columns={c.work.columns} ratio={c.work.cardRatio} />
                 </section>
               );
@@ -38,14 +39,18 @@ export function HomeView({ c }: { c: SiteContent }) {
               return (
                 <section key="digital" id="digital" className="section wrap" aria-label={c.digital.title}>
                   <SectionHead title={c.digital.title} action={visibleDigital(c).length > c.digital.homeLimit ? { href: "/work#digital", label: c.digital.linkLabel } : undefined} />
-                  {c.digital.intro && <p className="section-intro">{c.digital.intro}</p>}
+                  {c.digital.intro && shown(c.elements, "digital.intro") && (
+                    <p className="section-intro" {...el(c.elements, "digital.intro")}>
+                      {c.digital.intro}
+                    </p>
+                  )}
                   <DigitalGrid items={visibleDigital(c).slice(0, c.digital.homeLimit)} columns={c.digital.columns} />
                 </section>
               );
             case "naming":
               return (
                 <section key="naming" id="naming" className="section wrap" aria-label={c.naming.title}>
-                  <NamingRow naming={c.naming} />
+                  <NamingRow naming={c.naming} els={c.elements} />
                 </section>
               );
             default:

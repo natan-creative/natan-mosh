@@ -15,6 +15,7 @@ export const AREA_LABELS: Record<keyof SiteContent, string> = {
   footer: "תחתית העמוד",
   theme: "עיצוב",
   motion: "תנועה",
+  elements: "מיקום והסתרה",
 };
 
 /** אילו אזורים שונים בין שתי גרסאות */

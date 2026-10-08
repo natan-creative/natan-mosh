@@ -322,11 +322,25 @@
   "size": 4250
  },
  {
+  "name": "natan-icon-180.png",
+  "kind": "image",
+  "width": 180,
+  "height": 180,
+  "size": 22732
+ },
+ {
+  "name": "natan-icon.png",
+  "kind": "image",
+  "width": 512,
+  "height": 512,
+  "size": 103919
+ },
+ {
   "name": "natan-logo.webp",
   "kind": "image",
-  "width": 579,
-  "height": 533,
-  "size": 8712
+  "width": 430,
+  "height": 437,
+  "size": 18890
  },
  {
   "name": "pink-ribbon-cover.webp",

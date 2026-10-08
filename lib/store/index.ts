@@ -39,7 +39,7 @@ export const builtinMedia: MediaAsset[] = (builtin as { name: string; kind?: "im
   kind: f.kind ?? "image",
   src: `/work/${f.name}`,
   name: f.name,
-  mime: f.kind === "video" ? "video/mp4" : "image/webp",
+  mime: f.kind === "video" ? "video/mp4" : f.name.endsWith(".png") ? "image/png" : "image/webp",
   size: f.size,
   width: f.width,
   height: f.height,

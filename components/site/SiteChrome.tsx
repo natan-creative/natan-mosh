@@ -6,6 +6,7 @@ import { Reveal } from "./Reveal";
 import { SiteHeader } from "./SiteHeader";
 import { ThemeStyle } from "./ThemeStyle";
 import { WhatsApp } from "./WhatsApp";
+import { el, shown } from "@/lib/elements";
 
 /** כל מה שעוטף את העמודים: צבעים וטיפוגרפיה, header, כפתורים צפים */
 export function SiteChrome({ c, children, watch }: { c: SiteContent; children: React.ReactNode; watch?: string }) {
@@ -21,8 +22,8 @@ export function SiteChrome({ c, children, watch }: { c: SiteContent; children: R
       <Cursor />
       <Reveal watch={watch} />
       <aside aria-label="פעולות מהירות">
-        <WhatsApp whatsapp={c.contact.whatsapp} />
-        <A11yMenu />
+        {shown(c.elements, "fab.whatsapp") && <WhatsApp whatsapp={c.contact.whatsapp} el={el(c.elements, "fab.whatsapp")} />}
+        {shown(c.elements, "fab.a11y") && <A11yMenu el={el(c.elements, "fab.a11y")} />}
       </aside>
     </>
   );

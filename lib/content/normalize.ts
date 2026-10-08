@@ -1,9 +1,9 @@
 // מקבל מסמך תוכן מכל מקור (DB, עורך, גרסה ישנה) ומחזיר מסמך תקין:
 // משלים שדות חסרים מברירת המחדל, ומצמיד כל ערך ויזואלי לטווח המותר.
 import { defaultContent, emptyDigital, emptyName, emptyProject } from "./defaults";
-import { DIGITAL_COLUMNS, FONTS, LETTER_SPACING, LINE_HEIGHT, TYPE_LIMITS, WORK_COLUMNS, ZOOM } from "./limits";
+import { BUTTON_LIMITS, DIGITAL_COLUMNS, ELEMENTS, FONTS, LETTER_SPACING, LINE_HEIGHT, OFFSET, TYPE_LIMITS, WORK_COLUMNS, ZOOM } from "./limits";
 import { HEX } from "./contrast";
-import type { MediaRef, SectionId, SiteContent, TypeRole, TypeStyle } from "./types";
+import type { ElementId, ElementState, MediaRef, SectionId, SiteContent, TypeRole, TypeStyle } from "./types";
 
 type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -117,6 +117,34 @@ export function normalizeContent(raw: unknown): SiteContent {
   for (const role of Object.keys(d.theme.typography) as TypeRole[]) {
     c.theme.typography[role] = typeStyle(role, c.theme.typography[role], d.theme.typography[role]);
   }
+
+  // כפתורים
+  const btn = c.theme.buttons;
+  const B = BUTTON_LIMITS;
+  const db = d.theme.buttons;
+  c.theme.buttons = {
+    radius: Math.round(clamp(btn.radius, B.radius.min, B.radius.max, db.radius)),
+    paddingX: Math.round(clamp(btn.paddingX, B.paddingX.min, B.paddingX.max, db.paddingX)),
+    paddingY: Math.round(clamp(btn.paddingY, B.paddingY.min, B.paddingY.max, db.paddingY)),
+    fontSize: Math.round(clamp(btn.fontSize, B.fontSize.min, B.fontSize.max, db.fontSize)),
+    weight: B.weights.includes(btn.weight) ? btn.weight : db.weight,
+    uppercase: Boolean(btn.uppercase),
+    letterSpacing: clamp(btn.letterSpacing, B.letterSpacing.min, B.letterSpacing.max, db.letterSpacing),
+    borderWidth: Math.round(clamp(btn.borderWidth, B.borderWidth.min, B.borderWidth.max, db.borderWidth)),
+    shadow: ["none", "soft", "strong"].includes(btn.shadow) ? btn.shadow : db.shadow,
+    hover: ["darken", "invert", "lift", "underline"].includes(btn.hover) ? btn.hover : db.hover,
+  };
+
+  // אלמנטים: רק מזהים מוכרים, והזזה בתוך הטווח
+  const known = new Set(ELEMENTS.map((e) => e.id));
+  const els: Partial<Record<ElementId, ElementState>> = {};
+  for (const [id, st] of Object.entries(c.elements ?? {}) as [ElementId, ElementState][]) {
+    if (!known.has(id) || !isObj(st)) continue;
+    const x = Math.round(clamp(st.x, -OFFSET.x, OFFSET.x, 0));
+    const y = Math.round(clamp(st.y, -OFFSET.y, OFFSET.y, 0));
+    if (st.hidden || x || y) els[id] = { hidden: Boolean(st.hidden), x, y };
+  }
+  c.elements = els;
 
   c.hero.image = media(c.hero.image);
   c.hero.video = media(c.hero.video);

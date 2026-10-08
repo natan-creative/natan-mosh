@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: s.metaDescription,
     ...(s.canonical ? { metadataBase: new URL(s.canonical), alternates: { canonical: "/" } } : {}),
     openGraph: { title: s.siteTitle, description: s.metaDescription, images: s.ogImage ? [s.ogImage.src] : undefined, locale: "he_IL", type: "website" },
-    icons: s.favicon ? { icon: s.favicon.src } : undefined,
+    icons: s.favicon ? { icon: s.favicon.src, apple: s.favicon.src } : undefined,
   };
 }
 

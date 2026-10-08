@@ -131,7 +131,7 @@ export const defaultContent: SiteContent = {
     canonical: "",
     gaId: "",
     ogImage: null,
-    favicon: staticImg("natan-logo", "הלוגו של נתן קוסובסקי"),
+    favicon: { id: "static:/work/natan-icon.png", kind: "image", src: "/work/natan-icon.png", alt: "הלוגו של נתן קוסובסקי", width: 512, height: 512 },
   },
   brand: { name: "Natan Kosovsky", short: "NK", role: "Creative Director / Copywriter" },
   header: {
@@ -346,6 +346,13 @@ export const defaultContent: SiteContent = {
     instagram: "",
     cta: "",
     whatsapp: { enabled: true, number: "972544766060", message: "היי נתן, הגעתי מהאתר שלך" },
+    form: {
+      enabled: true,
+      title: "יש בריף? בוא נחשוב עליו.",
+      text: "כמה מילים על מה שצריך, ואחזור אליך בהקדם.",
+      button: "שליחה",
+      success: "ההודעה נשלחה. אחזור אליך בקרוב.",
+    },
   },
   footer: {
     copyright: "© 2026 Natan Kosovsky",
@@ -360,4 +367,5 @@ export const defaultContent: SiteContent = {
   },
   theme: { preset: "editorial", ...structuredClone(PRESETS.editorial.theme) },
   motion: { enabled: true, intensity: "default", pageTransitions: true, hover: true, loader: true },
+  elements: {},
 };

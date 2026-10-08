@@ -135,11 +135,47 @@ export type ColorTokens = {
 
 export type PresetId = "editorial" | "bold" | "minimal" | "dark";
 
+export type ButtonStyle = {
+  radius: number;
+  paddingX: number;
+  paddingY: number;
+  fontSize: number;
+  weight: number;
+  uppercase: boolean;
+  letterSpacing: number;
+  borderWidth: number;
+  shadow: "none" | "soft" | "strong";
+  hover: "darken" | "invert" | "lift" | "underline";
+};
+
+/** אלמנטים שאפשר להזיז (בדסקטופ) ולהסתיר */
+export type ElementId =
+  | "hero.headline"
+  | "hero.note"
+  | "hero.arrow"
+  | "hero.photo"
+  | "hero.rule"
+  | "hero.role"
+  | "hero.cta"
+  | "work.head"
+  | "digital.intro"
+  | "naming.head"
+  | "about.text"
+  | "about.image"
+  | "contact.block"
+  | "contact.form"
+  | "footer.wink"
+  | "fab.whatsapp"
+  | "fab.a11y";
+
+export type ElementState = { hidden?: boolean; x?: number; y?: number };
+
 export type Theme = {
   preset: PresetId | "custom";
   colors: ColorTokens;
   grain: boolean;
   typography: Record<TypeRole, TypeStyle>;
+  buttons: ButtonStyle;
 };
 
 export type Motion = {
@@ -191,6 +227,7 @@ export type SiteContent = {
     instagram: string;
     cta: string;
     whatsapp: { enabled: boolean; number: string; message: string };
+    form: { enabled: boolean; title: string; text: string; button: string; success: string };
   };
   footer: {
     copyright: string;
@@ -200,6 +237,8 @@ export type SiteContent = {
   };
   theme: Theme;
   motion: Motion;
+  /** מיקום (בדסקטופ) והסתרה של אלמנטים */
+  elements: Partial<Record<ElementId, ElementState>>;
 };
 
 /** פריט בספריית המדיה */
