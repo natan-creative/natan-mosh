@@ -10,7 +10,7 @@ export function SectionHead({ title, action, el }: Props) {
   const link =
     action && typeof action === "object" && "href" in action ? (action as { href: string; label: string }) : null;
   return (
-    <div className="section-head" data-reveal="slide" {...el}>
+    <div className="section-head" data-reveal="slide" suppressHydrationWarning {...el}>
       <h2 className="section-title latin">{title}</h2>
       {link ? (
         <Link href={link.href} className="section-action" transitionTypes={["nav-forward"]}>

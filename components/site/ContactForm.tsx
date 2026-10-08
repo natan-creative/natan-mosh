@@ -36,7 +36,7 @@ export function ContactForm({ form, el }: Props) {
   }
 
   return (
-    <section className="cform" aria-labelledby="cform-title" data-reveal="up" {...el}>
+    <section className="cform" aria-labelledby="cform-title" data-reveal="up" suppressHydrationWarning {...el}>
       <div className="cform-head">
         <h2 id="cform-title">{form.title}</h2>
         {form.text && <p>{form.text}</p>}

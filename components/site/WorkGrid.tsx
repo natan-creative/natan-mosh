@@ -23,7 +23,7 @@ export function WorkGrid({ projects, columns = 3, ratio = "4/3" }: { projects: P
           className="work-card"
           data-cursor={w.type === "case" ? "VIEW" : "IDEA →"}
           style={{ ["--accent" as string]: w.design.accent, ["--i" as string]: i % columns }}
-          data-reveal="up"
+          data-reveal="up" suppressHydrationWarning
         >
           <div className="work-frame" style={morphStyle(w.id)}>
             <Media media={w.cover} ratio={ratio} sizes={`(max-width: 999px) 100vw, ${Math.round(100 / columns)}vw`} priority={i < 2} className="work-media" placeholder={w.title} />

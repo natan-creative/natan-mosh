@@ -27,7 +27,7 @@ export function NamingRow({ naming, els = {} }: { naming: SiteContent["naming"];
       />
       <ul className="names">
         {list.map((n, i) => (
-          <li key={n.id} className="name-cell" tabIndex={0} data-reveal="up" style={{ ["--i" as string]: i % 4 }}>
+          <li key={n.id} className="name-cell" tabIndex={0} data-reveal="up" suppressHydrationWarning style={{ ["--i" as string]: i % 4 }}>
             {n.image ? (
               <Media media={n.image} ratio="16/9" sizes="(max-width: 699px) 50vw, 25vw" className="name-logo" />
             ) : (

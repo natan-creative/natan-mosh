@@ -19,7 +19,7 @@ export function DigitalGrid({ items, columns }: { items: DigitalItem[]; columns:
         // בלי בעיה/רעיון/ביצוע: משבצת לוגו פשוטה, בלי אינטראקציה
         if (!hasStory) {
           return (
-            <article key={d.id} className="d-tile is-logo" data-reveal="up" style={{ ["--i" as string]: i % columns.desktop }}>
+            <article key={d.id} className="d-tile is-logo" data-reveal="up" suppressHydrationWarning style={{ ["--i" as string]: i % columns.desktop }}>
               <div className="d-face">
                 <Media media={d.media} ratio="1/1" sizes={`(max-width: 599px) ${Math.round(100 / columns.mobile)}vw, (max-width: 1023px) ${Math.round(100 / columns.tablet)}vw, ${Math.round(100 / columns.desktop)}vw`} className="d-media" placeholder={d.title} />
               </div>
@@ -32,7 +32,7 @@ export function DigitalGrid({ items, columns }: { items: DigitalItem[]; columns:
           );
         }
         return (
-          <article key={d.id} className="d-tile" data-open={isOpen || undefined} data-reveal="up" style={{ ["--i" as string]: i % columns.desktop }}>
+          <article key={d.id} className="d-tile" data-open={isOpen || undefined} data-reveal="up" suppressHydrationWarning style={{ ["--i" as string]: i % columns.desktop }}>
             <button
               type="button"
               className="d-face"

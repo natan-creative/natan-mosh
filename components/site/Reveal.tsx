@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 // מוסיף is-in לכל [data-reveal] כשהוא נכנס למסך. שלושה סוגים בלבד: up / slide / scale.
+// אזורים שעוד לא עברו hydration יכולים לקבל is-in לפני React, לכן כל [data-reveal] מסומן suppressHydrationWarning.
 export function Reveal({ watch }: { watch?: string }) {
   const pathname = usePathname();
   const key = watch ?? pathname;

@@ -88,7 +88,7 @@ export function WorkIndexView({ c }: { c: SiteContent }) {
 
 function Chapter({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <section className="chapter" data-reveal="up">
+    <section className="chapter" data-reveal="up" suppressHydrationWarning>
       <h2 className="label latin">{label}</h2>
       <div className="chapter-body">{children}</div>
     </section>
@@ -144,7 +144,7 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
 
         <div className="wrap">
           {meta.length > 0 && (
-            <dl className="case-meta" data-reveal="slide">
+            <dl className="case-meta" data-reveal="slide" suppressHydrationWarning>
               {meta.map(([k, v]) => (
                 <div key={k}>
                   <dt>{k}</dt>
@@ -192,7 +192,7 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
           {w.gallery.length > 0 && (
             <div className="gallery">
               {w.gallery.map((g) => (
-                <figure key={g.id} className={`gallery-item is-${g.span}`} data-reveal="scale">
+                <figure key={g.id} className={`gallery-item is-${g.span}`} data-reveal="scale" suppressHydrationWarning>
                   <Media media={g.media} ratio={g.ratio} sizes={g.span === "half" ? "(max-width: 767px) 100vw, 50vw" : "100vw"} />
                   {g.media.caption && <figcaption>{g.media.caption}</figcaption>}
                 </figure>
@@ -216,7 +216,7 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
           )}
 
           {(w.credits || w.links.length > 0) && (
-            <div className="case-extra" data-reveal="up">
+            <div className="case-extra" data-reveal="up" suppressHydrationWarning>
               {w.credits && (
                 <div>
                   <h2 className="label latin">CREDITS</h2>

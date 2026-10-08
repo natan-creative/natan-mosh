@@ -35,7 +35,7 @@ export function AboutContact({ c, showAbout = true, showContact = true, withFoot
       {(showAbout || showContact) && (
         <section className="ac wrap" data-single={showAbout !== showContact || undefined} aria-label="אודות ויצירת קשר">
           {showAbout && (
-            <div id="about" className="ac-about" data-reveal="up">
+            <div id="about" className="ac-about" data-reveal="up" suppressHydrationWarning>
               <h2 className="section-title latin">{about.title}</h2>
               {shown(c.elements, "about.text") && (
                 <div className="ac-body" {...el(c.elements, "about.text")}>
@@ -54,7 +54,7 @@ export function AboutContact({ c, showAbout = true, showContact = true, withFoot
           )}
 
           {showContact && shown(c.elements, "contact.block") && (
-            <div id="contact" className="ac-contact" data-reveal="up" {...el(c.elements, "contact.block")}>
+            <div id="contact" className="ac-contact" data-reveal="up" suppressHydrationWarning {...el(c.elements, "contact.block")}>
               <h2 className="section-title latin">{contact.title}</h2>
               {contact.cta && <p className="ac-cta">{contact.cta}</p>}
               <a href={`mailto:${contact.email}`} className="ac-mail latin">
