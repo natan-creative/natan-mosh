@@ -37,6 +37,7 @@ export function LinkInput({ label, hint, value, onChange }: { label: string; hin
     ["/#naming", "שמות"],
     ["/#about", "אודות"],
     ["/#contact", "יצירת קשר"],
+    ...content.custom.map((s) => [`/#s-${s.id}`, `סקשן: ${s.name}`]),
     ["/work", "כל העבודות"],
     ["/accessibility", "הצהרת נגישות"],
     ...content.work.projects.map((p) => [`/work/${p.slug}`, `עבודה: ${p.title}`]),

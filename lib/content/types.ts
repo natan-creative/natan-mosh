@@ -3,6 +3,7 @@
 
 export type MediaKind = "image" | "video" | "embed";
 export type Fit = "cover" | "contain" | "original";
+export type Align = "start" | "center" | "end";
 export type Ratio = `${number}/${number}`;
 
 /** הפניה לקובץ מדיה + איך להציג אותו במקום הספציפי הזה */
@@ -20,6 +21,10 @@ export type MediaRef = {
   /** זום (1–2): יחד עם נקודת הפוקוס זה ה"חיתוך" */
   zoom?: number;
   fit?: Fit;
+  /** גודל התצוגה באחוזים מהמקום שלה (20–100). 100 = מלא */
+  scale?: number;
+  /** יישור כשהמדיה מוקטנת */
+  align?: Align;
   // וידאו
   poster?: string;
   autoplay?: boolean;
@@ -105,6 +110,47 @@ export type NameItem = {
 export type NavItem = { id: string; label: string; href: string };
 
 export type SectionId = "work" | "digital" | "naming" | "about" | "contact";
+/** אזור בדף הבית: אחד הקבועים, או סקשן שנבנה ב-Admin ("c:<id>") */
+export type SectionKey = SectionId | `c:${string}`;
+
+// ---------- סקשנים חופשיים: גריד של חלקים, ובכל חלק רכיבים ----------
+
+export type BlockKind = "heading" | "text" | "image" | "button";
+
+export type Block = {
+  id: string;
+  kind: BlockKind;
+  /** כותרת / טקסט / תווית הכפתור */
+  text: string;
+  /** כפתור */
+  href: string;
+  /** תמונה או סרטון */
+  media: MediaRef | null;
+  ratio: Ratio;
+  align: Align;
+};
+
+export type Cell = {
+  id: string;
+  /** כמה עמודות החלק תופס */
+  span: number;
+  /** הרכיבים בתוך החלק: אחד מתחת לשני, או זה לצד זה */
+  dir: "stack" | "row";
+  valign: Align;
+  blocks: Block[];
+};
+
+export type CustomSection = {
+  id: string;
+  /** שם פנימי ב-Admin */
+  name: string;
+  /** כותרת באתר (לא חובה) */
+  title: string;
+  columns: number;
+  gap: "s" | "m" | "l";
+  tone: "default" | "inverted";
+  cells: Cell[];
+};
 
 export type FontId = "bebas" | "heebo" | "rubik" | "frank" | "secular" | "gveret";
 
@@ -206,7 +252,8 @@ export type SiteContent = {
     image: MediaRef | null;
     video: MediaRef | null;
   };
-  sections: { id: SectionId; visible: boolean }[];
+  sections: { id: SectionKey; visible: boolean }[];
+  custom: CustomSection[];
   work: { title: string; linkLabel: string; columns: number; cardRatio: Ratio; projects: Project[] };
   digital: {
     title: string;

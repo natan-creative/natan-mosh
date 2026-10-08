@@ -20,6 +20,7 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
       { href: "/admin/naming", label: "שמות" },
       { href: "/admin/about", label: "אודות" },
       { href: "/admin/contact", label: "יצירת קשר" },
+      { href: "/admin/sections", label: "סקשנים" },
       { href: "/admin/header", label: "תפריט עליון" },
       { href: "/admin/footer", label: "תחתית העמוד" },
     ],

@@ -7,6 +7,7 @@ export const AREA_LABELS: Record<keyof SiteContent, string> = {
   header: "תפריט עליון",
   hero: "פתיחה",
   sections: "סדר האזורים",
+  custom: "סקשנים",
   work: "עבודות נבחרות",
   digital: "דיגיטל ורעיונות",
   naming: "שמות",

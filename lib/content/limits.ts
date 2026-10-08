@@ -35,6 +35,10 @@ export const DIGITAL_COLUMNS = {
 export const WORK_COLUMNS = { min: 2, max: 4 };
 
 export const ZOOM = { min: 1, max: 2, step: 0.05 };
+/** גודל תמונה במקום שלה, באחוזים */
+export const SCALE = { min: 20, max: 100, step: 5 };
+/** סקשנים חופשיים */
+export const CUSTOM = { columns: { min: 1, max: 4 }, cells: 12, blocks: 12 };
 
 export const BUTTON_LIMITS = {
   radius: { min: 0, max: 40, step: 1 },

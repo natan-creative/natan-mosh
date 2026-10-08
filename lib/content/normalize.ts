@@ -1,9 +1,10 @@
 // מקבל מסמך תוכן מכל מקור (DB, עורך, גרסה ישנה) ומחזיר מסמך תקין:
 // משלים שדות חסרים מברירת המחדל, ומצמיד כל ערך ויזואלי לטווח המותר.
 import { defaultContent, emptyDigital, emptyName, emptyProject } from "./defaults";
-import { BUTTON_LIMITS, DIGITAL_COLUMNS, ELEMENTS, FONTS, LETTER_SPACING, LINE_HEIGHT, OFFSET, TYPE_LIMITS, WORK_COLUMNS, ZOOM } from "./limits";
+import { emptyBlock, emptyCell, emptySection, sectionKey } from "./blocks";
+import { BUTTON_LIMITS, DIGITAL_COLUMNS, ELEMENTS, FONTS, CUSTOM, LETTER_SPACING, LINE_HEIGHT, OFFSET, RATIOS, SCALE, TYPE_LIMITS, WORK_COLUMNS, ZOOM } from "./limits";
 import { HEX } from "./contrast";
-import type { ElementId, ElementState, MediaRef, SectionId, SiteContent, TypeRole, TypeStyle } from "./types";
+import type { Align, Block, BlockKind, Cell, CustomSection, ElementId, ElementState, MediaRef, SectionId, SectionKey, SiteContent, TypeRole, TypeStyle } from "./types";
 
 type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -42,6 +43,8 @@ function media(m: MediaRef | null | undefined): MediaRef | null {
     ...m,
     alt: typeof m.alt === "string" ? m.alt : "",
     zoom: clamp(m.zoom, ZOOM.min, ZOOM.max, 1),
+    scale: Math.round(clamp(m.scale, SCALE.min, SCALE.max, 100)),
+    align: align(m.align),
     focal: m.focal ? { x: clamp(m.focal.x, 0, 100, 50), y: clamp(m.focal.y, 0, 100, 50) } : undefined,
   };
 }
@@ -63,16 +66,41 @@ function typeStyle(role: TypeRole, t: TypeStyle, base: TypeStyle): TypeStyle {
   };
 }
 
+const align = (v: unknown): Align => (v === "center" || v === "end" ? v : "start");
+
 const SECTION_IDS: SectionId[] = ["work", "digital", "naming", "about", "contact"];
+const BLOCK_KINDS: BlockKind[] = ["heading", "text", "image", "button"];
+
+function customSection(raw: CustomSection): CustomSection {
+  const s = merge(emptySection(raw.id), raw);
+  const columns = Math.round(clamp(s.columns, CUSTOM.columns.min, CUSTOM.columns.max, 2));
+  const cells = (Array.isArray(s.cells) ? s.cells : []).filter(isObj).slice(0, CUSTOM.cells).map((rc): Cell => {
+    const cell = merge(emptyCell(String(rc.id)), rc);
+    const blocks = (Array.isArray(cell.blocks) ? cell.blocks : [])
+      .filter((b) => isObj(b) && BLOCK_KINDS.includes(b.kind))
+      .slice(0, CUSTOM.blocks)
+      .map((rb): Block => {
+        const b = merge(emptyBlock(String(rb.id), rb.kind), rb);
+        return { ...b, text: String(b.text), href: String(b.href), media: media(b.media), ratio: RATIOS.some((r) => r.value === b.ratio) ? b.ratio : "4/3", align: align(b.align) };
+      });
+    return { ...cell, span: Math.round(clamp(cell.span, 1, columns, 1)), dir: cell.dir === "row" ? "row" : "stack", valign: align(cell.valign), blocks };
+  });
+  return { ...s, name: String(s.name) || "סקשן", title: String(s.title), columns, gap: ["s", "l"].includes(s.gap) ? s.gap : "m", tone: s.tone === "inverted" ? "inverted" : "default", cells };
+}
 
 export function normalizeContent(raw: unknown): SiteContent {
   const c = merge(structuredClone(defaultContent), raw);
   const d = defaultContent;
 
-  // סקשנים: כל אחד פעם אחת, אף אחד לא חסר
-  const seen = new Set<SectionId>();
-  c.sections = c.sections.filter((s) => SECTION_IDS.includes(s.id) && !seen.has(s.id) && seen.add(s.id));
-  for (const id of SECTION_IDS) if (!seen.has(id)) c.sections.push({ id, visible: true });
+  // סקשנים חופשיים: מזהה ייחודי לכל אחד
+  const ids = new Set<string>();
+  c.custom = (Array.isArray(c.custom) ? c.custom : []).filter((x) => isObj(x) && typeof x.id === "string" && x.id && !ids.has(x.id) && ids.add(x.id)).map(customSection);
+
+  // סדר האזורים: כל אחד פעם אחת, אף אחד לא חסר
+  const keys = new Set<SectionKey>([...SECTION_IDS, ...c.custom.map((x) => sectionKey(x.id))]);
+  const seen = new Set<SectionKey>();
+  c.sections = c.sections.filter((s) => keys.has(s.id) && !seen.has(s.id) && seen.add(s.id)).map((s) => ({ id: s.id, visible: s.visible !== false }));
+  for (const id of keys) if (!seen.has(id)) c.sections.push({ id, visible: true });
 
   // עבודות: מבנה מלא, slug ייחודי
   const slugs = new Set<string>();

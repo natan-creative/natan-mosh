@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { ZOOM } from "@/lib/content/limits";
+import { SCALE, ZOOM } from "@/lib/content/limits";
 import { refFromAsset } from "@/lib/content/media-usage";
 import { toEmbed } from "@/lib/content/embed";
 import type { MediaKind, MediaRef } from "@/lib/content/types";
@@ -145,6 +145,66 @@ export function MediaRefEditor({ value, onChange, ratio }: { value: MediaRef; on
   );
 }
 
+/** גודל התמונה במקום שלה. הערך נשמר כשעוזבים את הסליידר, כדי שכל גרירה תהיה צעד undo אחד */
+function SizeControl({ value, onChange }: { value: MediaRef; onChange: (m: MediaRef) => void }) {
+  const id = useId();
+  const scale = value.scale ?? 100;
+  const [live, setLive] = useState(scale);
+  const [prev, setPrev] = useState(scale);
+  if (scale !== prev) {
+    setPrev(scale);
+    setLive(scale);
+  }
+  const commit = () => live !== scale && onChange({ ...value, scale: live });
+  return (
+    <div className="ad-media-size">
+      <div className="ad-field">
+        <label className="ad-label" htmlFor={id}>
+          גודל
+        </label>
+        <div className="ad-slider">
+          <input
+            id={id}
+            type="range"
+            dir="ltr"
+            min={SCALE.min}
+            max={SCALE.max}
+            step={SCALE.step}
+            value={live}
+            aria-valuetext={`${live}%`}
+            onChange={(e) => setLive(Number(e.target.value))}
+            onPointerUp={commit}
+            onKeyUp={commit}
+            onBlur={commit}
+          />
+          <output htmlFor={id} dir="ltr">
+            {live}%
+          </output>
+        </div>
+        <div className="ad-size-presets">
+          {[100, 75, 50, 33].map((v) => (
+            <button key={v} type="button" className="ad-chip" aria-pressed={scale === v} onClick={() => onChange({ ...value, scale: v })}>
+              {v === 100 ? "מלא" : `${v}%`}
+            </button>
+          ))}
+        </div>
+      </div>
+      {scale < 100 && (
+        <Segmented
+          label="יישור"
+          value={value.align ?? "start"}
+          onChange={(align) => onChange({ ...value, align })}
+          options={[
+            { value: "start", label: "ימין" },
+            { value: "center", label: "מרכז" },
+            { value: "end", label: "שמאל" },
+          ]}
+        />
+      )}
+    </div>
+  );
+}
+
 type Props = {
   label: string;
   hint?: string;
@@ -230,6 +290,7 @@ export function MediaField({ label, hint, value, onChange, kind, ratio, allowEmb
           }}
         />
       </div>
+      {value && <SizeControl value={value} onChange={onChange} />}
       {value && !value.alt && <p className="ad-warning">חסר תיאור לנגישות.</p>}
       {errors.map((e) => (
         <p key={e} className="ad-warning" role="alert">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { SiteContent } from "@/lib/content/types";
 import { AboutContact, real, SiteFooter, tel } from "./AboutContact";
+import { CustomSectionView } from "./CustomSection";
 import { DigitalGrid } from "./DigitalGrid";
 import { Hero } from "./Hero";
 import { Media } from "./Media";
@@ -27,6 +28,10 @@ export function HomeView({ c }: { c: SiteContent }) {
         <Hero hero={c.hero} brand={c.brand} els={c.elements} />
         {c.sections.map((s, i) => {
           if (!s.visible) return null;
+          if (s.id.startsWith("c:")) {
+            const cs = c.custom.find((x) => `c:${x.id}` === s.id);
+            return cs ? <CustomSectionView key={s.id} s={cs} /> : null;
+          }
           switch (s.id) {
             case "work":
               return (

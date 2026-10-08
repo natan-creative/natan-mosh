@@ -161,6 +161,7 @@ export const defaultContent: SiteContent = {
     { id: "about", visible: true },
     { id: "contact", visible: true },
   ],
+  custom: [],
   work: {
     title: "SELECTED WORK",
     linkLabel: "לכל העבודות",

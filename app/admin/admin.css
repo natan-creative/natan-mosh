@@ -1690,3 +1690,209 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- גודל תמונה ---------- */
+
+.ad-media-size {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ad-size-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ad-chip {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--a-line-2);
+  border-radius: 99px;
+  background: #fff;
+  font-size: 13px;
+}
+
+.ad-chip[aria-pressed="true"] {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #fff;
+}
+
+/* ---------- סקשנים: מפה, תבניות, רכיבים ---------- */
+
+.ad-smap {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: 8px;
+  margin-block: 12px;
+}
+
+.ad-smap-cell {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 96px;
+  padding: 10px;
+  border: 1.5px dashed var(--a-line-2);
+  border-radius: var(--a-radius);
+  background: #fff;
+  text-align: start;
+}
+
+button.ad-smap-cell:hover {
+  border-color: var(--a-ink-2);
+}
+
+.ad-smap-cell[aria-pressed="true"] {
+  border-style: solid;
+  border-color: var(--a-focus);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--a-focus) 25%, transparent);
+}
+
+.ad-smap-cell.is-add {
+  place-content: center;
+  color: var(--a-muted);
+  font-weight: 600;
+}
+
+.ad-smap-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--a-muted);
+}
+
+.ad-smap-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ad-smap-blocks[data-dir="row"] {
+  flex-direction: row;
+}
+
+.ad-smap-block {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 22px;
+  border-radius: 4px;
+  background: var(--a-bg);
+  color: var(--a-ink-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ad-smap-block.is-image {
+  min-height: 40px;
+  background: #e4e9ef;
+}
+
+.ad-smap-block.is-heading {
+  background: #ebe7df;
+}
+
+.ad-smap-empty {
+  font-size: 12px;
+  color: var(--a-muted);
+}
+
+.ad-smap.is-small {
+  gap: 3px;
+  margin: 0;
+}
+
+.ad-smap.is-small .ad-smap-cell {
+  min-height: 44px;
+  padding: 4px;
+  gap: 2px;
+  border-width: 1px;
+  border-radius: 4px;
+}
+
+.ad-smap.is-small .ad-smap-block {
+  min-height: 9px;
+  font-size: 0;
+}
+
+.ad-smap.is-small .ad-smap-block.is-image {
+  min-height: 18px;
+}
+
+.ad-smap.is-small .ad-smap-empty {
+  font-size: 10px;
+}
+
+.ad-templates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.ad-template {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-bg);
+  text-align: start;
+}
+
+.ad-template:hover {
+  border-color: var(--a-ink-2);
+  background: #fff;
+}
+
+.ad-template strong {
+  font-size: 14px;
+}
+
+.ad-row-thumb.is-map {
+  width: 88px;
+  height: auto;
+  background: none;
+}
+
+.ad-cell-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--a-line);
+}
+
+.ad-cell-bar .ad-field {
+  margin: 0;
+  max-width: 200px;
+}
+
+.ad-block-kind {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--a-bg);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ad-add-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ad-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}

@@ -28,6 +28,7 @@ export function walkMedia(c: SiteContent, visit: Visit) {
   }
   for (const d of c.digital.items) slot(d, "media", `דיגיטל › ${d.title}`);
   for (const n of c.naming.items) slot(n, "image", `שמות › ${n.name}`);
+  for (const s of c.custom) for (const cell of s.cells) for (const b of cell.blocks) if (b.kind === "image") slot(b, "media", `סקשנים › ${s.name}`);
 }
 
 export function mediaUsage(c: SiteContent): Map<string, string[]> {
