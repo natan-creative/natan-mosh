@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MediaField } from "@/components/admin/MediaField";
 import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
 import { Card, PageHeader, TextInput } from "@/components/admin/ui";
+import { ChangePasswordForm } from "@/components/admin/ChangePasswordForm";
 
 export default function SettingsEditor() {
   const { content: c, update, backend } = useStudio();
@@ -26,6 +27,9 @@ export default function SettingsEditor() {
       <Card title="Google Analytics" hint="מזהה המדידה מתחיל ב-G-. ריק = בלי מדידה.">
         <TextInput label="Measurement ID" dir="ltr" placeholder="G-XXXXXXXXXX" value={ga} onChange={(v) => update((d) => void (d.settings.gaId = v.trim().toUpperCase()), "ga")} />
         {ga && !/^G-[A-Z0-9]+$/.test(ga) && <p className="ad-warning">המזהה לא נראה תקין (צריך להיות G- ואחריו אותיות ומספרים).</p>}
+      </Card>
+      <Card title="סיסמה" hint="שינוי הסיסמה דורש את הסיסמה הנוכחית.">
+        {backend === "supabase" ? <ChangePasswordForm /> : <p className="ad-hint">שינוי סיסמה זמין כשהסטודיו מחובר ל-Supabase.</p>}
       </Card>
       <Card title="מערכת">
         <p className="ad-hint">מקור הנתונים: {backend === "supabase" ? "Supabase" : "קבצים מקומיים (מצב פיתוח)"}</p>

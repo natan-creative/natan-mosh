@@ -93,6 +93,26 @@ export async function setNewPassword(_: unknown, form: FormData): Promise<{ erro
   redirect("/admin/login?reset=1");
 }
 
+/** שינוי סיסמה מתוך הסטודיו. דורש את הסיסמה הנוכחית, כדי שמי שנשאר פתוח על מחשב אחר לא יוכל לשנות אותה */
+export async function changePassword(_: unknown, form: FormData): Promise<{ ok?: true; error?: string } | undefined> {
+  if (BACKEND !== "supabase") return { error: "שינוי סיסמה זמין כשהסטודיו מחובר ל-Supabase." };
+  const admin = await getAdmin();
+  if (!admin) return { error: "צריך להתחבר מחדש." };
+  const current = String(form.get("current") ?? "");
+  const next = String(form.get("next") ?? "");
+  const again = String(form.get("again") ?? "");
+  if (next.length < 10) return { error: "הסיסמה החדשה צריכה להיות לפחות 10 תווים." };
+  if (next !== again) return { error: "שתי הסיסמאות החדשות לא זהות." };
+  const sb = await supabaseServer();
+  const { data } = await sb.auth.getUser();
+  if (!data.user?.email) return { error: "צריך להתחבר מחדש." };
+  const check = await sb.auth.signInWithPassword({ email: data.user.email, password: current });
+  if (check.error) return { error: "הסיסמה הנוכחית לא נכונה." };
+  const { error } = await sb.auth.updateUser({ password: next });
+  if (error) return { error: "לא הצלחנו לשמור את הסיסמה. נסה שוב." };
+  return { ok: true };
+}
+
 export async function logout() {
   if (BACKEND === "supabase") await (await supabaseServer()).auth.signOut();
   else (await cookies()).delete(LOCAL_COOKIE);
