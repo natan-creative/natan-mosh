@@ -23,6 +23,7 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
       { href: "/admin/sections", label: "סקשנים" },
       { href: "/admin/header", label: "תפריט עליון" },
       { href: "/admin/footer", label: "תחתית העמוד" },
+      { href: "/admin/legal", label: "מסמכים משפטיים" },
     ],
   },
   {

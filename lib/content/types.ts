@@ -284,6 +284,8 @@ export type SiteContent = {
   };
   theme: Theme;
   motion: Motion;
+  /** מדיניות פרטיות ותקנון (נשמרים ב-/privacy ו-/terms) */
+  legal: { privacy: LegalDoc; terms: LegalDoc };
   /** מיקום (בדסקטופ) והסתרה של אלמנטים */
   elements: Partial<Record<ElementId, ElementState>>;
 };
@@ -304,6 +306,9 @@ export type MediaAsset = {
   /** קבצים שמגיעים עם האתר (public/work) – אי אפשר למחוק */
   builtIn?: boolean;
 };
+
+/** מסמך משפטי: הטקסט נערך ב-Admin, והתאריך מתעדכן בכל שינוי */
+export type LegalDoc = { body: string; updatedAt: string };
 
 export type Revision = {
   id: string;

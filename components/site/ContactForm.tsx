@@ -2,35 +2,25 @@
 
 import { useState } from "react";
 import type { SiteContent } from "@/lib/content/types";
-
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-export const contactFormEnabled = Boolean(url && key);
+import { sendContact } from "@/app/contact/actions";
 
 type Props = { form: SiteContent["contact"]["form"]; el?: { "data-el": string; style: React.CSSProperties } };
 
-/** טופס קומפקטי: כותרת וטקסט מצד אחד, שורת שדות מהצד השני. נשמר בטבלת contact_messages ב-Supabase. */
+/** טופס קומפקטי: כותרת וטקסט מצד אחד, שורת שדות מהצד השני. ההודעה נשלחת למייל של נתן. */
 export function ContactForm({ form, el }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  if (!contactFormEnabled || !form.enabled) return null;
+  if (!form.enabled) return null;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = e.currentTarget;
-    const data = Object.fromEntries(new FormData(f));
     setStatus("sending");
-    try {
-      const res = await fetch(`${url}/rest/v1/contact_messages`, {
-        method: "POST",
-        headers: { apikey: key!, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ name: data.name, email: data.email, message: data.message }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
+    const res = await sendContact(undefined, new FormData(f));
+    if (res?.ok) {
       f.reset();
       setStatus("sent");
-    } catch {
+    } else {
       setStatus("error");
     }
   }
@@ -59,12 +49,13 @@ export function ContactForm({ form, el }: Props) {
             <span>מה על הפרק?</span>
             <textarea name="message" required maxLength={5000} rows={1} />
           </label>
+          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="cform-hp" />
           <button type="submit" className="btn btn-primary" disabled={status === "sending"}>
             {status === "sending" ? "שולח…" : form.button}
           </button>
           {status === "error" && (
             <p className="cform-status is-error" role="alert">
-              משהו לא עבד. אפשר לנסות שוב או לשלוח מייל.
+              משהו לא עבד. אפשר לנסות שוב, או לשלוח מייל ישירות.
             </p>
           )}
         </form>

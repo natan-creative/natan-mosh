@@ -99,6 +99,12 @@ export function SiteFooter({ c, withForm = true }: { c: SiteContent; withForm?: 
         {withForm && shown(c.elements, "contact.form") && <ContactForm form={c.contact.form} el={el(c.elements, "contact.form")} />}
         <footer className="footer">
           <span className="latin">{c.footer.copyright}</span>
+          <span className="footer-credit">
+            נבנה ועוצב על ידי{" "}
+            <a href="https://moshab.design" target="_blank" rel="noopener noreferrer">
+              Studio MoshMo
+            </a>
+          </span>
           {c.footer.wink.idle && shown(c.elements, "footer.wink") && (
             <span {...el(c.elements, "footer.wink")}>
               <Wink idle={c.footer.wink.idle} reveal={c.footer.wink.reveal} />
@@ -110,6 +116,14 @@ export function SiteFooter({ c, withForm = true }: { c: SiteContent; withForm?: 
                 {n.label}
               </Link>
             ))}
+          </nav>
+          <nav className="footer-nav footer-legal" aria-label="מסמכים משפטיים">
+            <Link href="/privacy" transitionTypes={["nav-back"]}>
+              מדיניות פרטיות
+            </Link>
+            <Link href="/terms" transitionTypes={["nav-back"]}>
+              תקנון ותנאי שימוש
+            </Link>
           </nav>
         </footer>
       </div>

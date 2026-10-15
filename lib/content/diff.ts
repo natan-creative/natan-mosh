@@ -16,6 +16,7 @@ export const AREA_LABELS: Record<keyof SiteContent, string> = {
   footer: "תחתית העמוד",
   theme: "עיצוב",
   motion: "תנועה",
+  legal: "מסמכים משפטיים",
   elements: "מיקום והסתרה",
 };
 

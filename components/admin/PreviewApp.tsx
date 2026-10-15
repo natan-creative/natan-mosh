@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { SiteContent } from "@/lib/content/types";
 import { SiteChrome } from "@/components/site/SiteChrome";
-import { AccessibilityView, HomeView, NotFoundView, ProjectView, WorkIndexView } from "@/components/site/views";
+import { AccessibilityView, HomeView, LegalView, NotFoundView, ProjectView, WorkIndexView } from "@/components/site/views";
 
 // ה-Preview מציג את האתר האמיתי עם הטיוטה. בתוך ה-Admin (embed) הוא מקבל עדכונים חיים ב-postMessage.
 export type PreviewMessage =
@@ -128,6 +128,7 @@ export function PreviewApp({ initial, embed, initialPath, revision }: { initial:
   else if (pathname === "/work") view = <WorkIndexView c={c} />;
   else if (slug && c.work.projects.some((p) => p.slug === slug && !p.hidden)) view = <ProjectView c={c} slug={slug} />;
   else if (pathname === "/accessibility") view = <AccessibilityView c={c} updated="אוקטובר 2026" />;
+  else if (pathname === "/privacy" || pathname === "/terms") view = <LegalView c={c} id={pathname === "/privacy" ? "privacy" : "terms"} preview />;
   else view = <NotFoundView text={c.footer.notFound} />;
 
   return (

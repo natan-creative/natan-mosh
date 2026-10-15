@@ -255,6 +255,53 @@ export function ProjectView({ c, slug }: { c: SiteContent; slug: string }) {
   );
 }
 
+/** טקסט משפטי: "## " כותרת, "- " רשימה, שורה ריקה מפרידה */
+function LegalBody({ body }: { body: string }) {
+  const out: React.ReactNode[] = [];
+  let list: string[] = [];
+  const flush = () => {
+    if (list.length) out.push(<ul key={`ul${out.length}`}>{list.map((l, i) => <li key={i}>{l}</li>)}</ul>);
+    list = [];
+  };
+  for (const raw of body.split("\n")) {
+    const line = raw.trim();
+    if (!line) {
+      flush();
+      continue;
+    }
+    if (line.startsWith("## ")) {
+      flush();
+      out.push(<h2 key={out.length}>{line.slice(3)}</h2>);
+    } else if (line.startsWith("- ")) list.push(line.slice(2));
+    else {
+      flush();
+      out.push(<p key={out.length}>{line}</p>);
+    }
+  }
+  flush();
+  return <>{out}</>;
+}
+
+const LEGAL_TITLE = { privacy: "מדיניות פרטיות", terms: "תקנון ותנאי שימוש" } as const;
+
+export function LegalView({ c, id, preview }: { c: SiteContent; id: "privacy" | "terms"; preview?: boolean }) {
+  const doc = c.legal[id];
+  const updated = new Date(doc.updatedAt);
+  return (
+    <PageTransition>
+      <main id="main" className="wrap statement">
+        <h1 className="page-title">{LEGAL_TITLE[id]}</h1>
+        {preview && <p className="ad-hint">תצוגה מקדימה: זה הנוסח בטיוטה.</p>}
+        <LegalBody body={doc.body} />
+        {!Number.isNaN(updated.getTime()) && (
+          <p className="statement-date">עודכן לאחרונה: {updated.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jerusalem" })}</p>
+        )}
+      </main>
+      <SiteFooter c={c} withForm={false} />
+    </PageTransition>
+  );
+}
+
 export function AccessibilityView({ c, updated }: { c: SiteContent; updated: string }) {
   const { contact } = c;
   return (

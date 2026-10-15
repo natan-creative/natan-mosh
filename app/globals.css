@@ -1671,9 +1671,33 @@ figcaption {
   color: var(--paper);
 }
 
+.fab-a11y {
+  width: 44px;
+  height: 44px;
+}
+
 .fab-a11y svg {
-  width: 30px;
-  height: 30px;
+  width: 22px;
+  height: 22px;
+}
+
+.footer-credit {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.footer-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-legal {
+  flex-basis: 100%;
+  margin-bottom: 64px;
+  gap: 8px 20px;
+  font-size: 13px;
+  color: var(--ink-2);
 }
 
 @keyframes fab-in {
@@ -2373,4 +2397,13 @@ html.a11y-still::view-transition-new(*) {
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+/* שדה מלכודת לטופס: מחוץ למסך, לא נגיש לקורא מסך ולמקלדת */
+.cform-hp {
+  position: absolute;
+  inset-inline-start: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }

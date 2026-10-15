@@ -1,6 +1,7 @@
 // התוכן ההתחלתי של האתר. משמש גם כ-seed למסד הנתונים וגם כ-fallback כשאין חיבור.
 // טקסטים בסוגריים מרובעים [...] הם placeholders שמחכים לחומרים מנתן.
 import { PRESETS } from "./limits";
+import { PRIVACY_TEXT, TERMS_TEXT } from "./legal-text";
 import type { DigitalItem, MediaRef, NameItem, Project, SiteContent } from "./types";
 
 export const staticImg = (name: string, alt: string, extra: Partial<MediaRef> = {}): MediaRef => ({
@@ -366,6 +367,7 @@ export const defaultContent: SiteContent = {
       { id: "f4", href: "/accessibility", label: "הצהרת נגישות" },
     ],
   },
+  legal: { privacy: { body: PRIVACY_TEXT, updatedAt: "2026-10-15" }, terms: { body: TERMS_TEXT, updatedAt: "2026-10-15" } },
   theme: { preset: "editorial", ...structuredClone(PRESETS.editorial.theme) },
   motion: { enabled: true, intensity: "default", pageTransitions: true, hover: true, loader: true },
   elements: {},
