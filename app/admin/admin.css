@@ -1896,3 +1896,19 @@ button.ad-smap-cell:hover {
   margin: 0;
   list-style: none;
 }
+
+.ad-notice {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: var(--a-radius);
+  background: #e3f3e7;
+  color: #1e5c2f;
+  font-size: 14px;
+}
+
+.ad-link {
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--a-ink-2);
+}

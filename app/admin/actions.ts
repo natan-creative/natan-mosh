@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { assertAdmin, getAdmin, LOCAL_COOKIE, localToken, safeEqual } from "@/lib/auth";
@@ -52,6 +52,45 @@ export async function login(_: unknown, form: FormData): Promise<{ error: string
     (await cookies()).set(LOCAL_COOKIE, token, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 14 });
   }
   redirect("/admin");
+}
+
+/** כתובת האתר לקישור באיפוס סיסמה. בפרודקשן חובה NEXT_PUBLIC_SITE_URL, כדי שלא יהיה אפשר לשנות אותה מבחוץ */
+async function siteOrigin(): Promise<string | null> {
+  const env = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
+  if (env) return env;
+  if (process.env.NODE_ENV === "production") return null;
+  const h = await headers();
+  return `http://${h.get("host") ?? "localhost:3000"}`;
+}
+
+/** שליחת קישור לאיפוס סיסמה. התשובה זהה בין אם המייל רשום ובין אם לא */
+export async function forgotPassword(_: unknown, form: FormData): Promise<{ sent?: true; error?: string } | undefined> {
+  if (BACKEND !== "supabase") return { error: "איפוס סיסמה זמין רק כשהסטודיו מחובר ל-Supabase." };
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  if (!email) return { error: "צריך למלא מייל." };
+  const origin = await siteOrigin();
+  if (!origin) return { error: "חסרה ההגדרה NEXT_PUBLIC_SITE_URL בשרת." };
+  const sb = await supabaseServer();
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/admin/reset/confirm` });
+  if (error?.status === 429) return { error: "יותר מדי בקשות. כדאי לחכות כמה דקות." };
+  if (error) console.warn("[admin] reset failed:", error.code ?? error.message);
+  return { sent: true };
+}
+
+/** קביעת סיסמה חדשה אחרי שהמשתמש פתח את קישור האיפוס (ה-session נוצר ב-/admin/reset/confirm) */
+export async function setNewPassword(_: unknown, form: FormData): Promise<{ error: string } | undefined> {
+  const password = String(form.get("password") ?? "");
+  const again = String(form.get("again") ?? "");
+  if (password.length < 10) return { error: "הסיסמה צריכה להיות לפחות 10 תווים." };
+  if (password !== again) return { error: "שתי הסיסמאות לא זהות." };
+  const sb = await supabaseServer();
+  const { data } = await sb.auth.getUser();
+  if (!data.user) return { error: "הקישור פג תוקף או שכבר נוצל. כדאי לבקש קישור חדש." };
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) return { error: "לא הצלחנו לשמור את הסיסמה. נסה שוב." };
+  // מתנתקים, ומתחברים מחדש עם הסיסמה החדשה
+  await sb.auth.signOut();
+  redirect("/admin/login?reset=1");
 }
 
 export async function logout() {
