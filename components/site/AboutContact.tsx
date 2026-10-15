@@ -101,7 +101,7 @@ export function SiteFooter({ c, withForm = true }: { c: SiteContent; withForm?: 
           <span className="latin">{c.footer.copyright}</span>
           <span className="footer-credit">
             נבנה ועוצב על ידי{" "}
-            <a href="https://moshab.design" target="_blank" rel="noopener noreferrer">
+            <a href="https://mosh-mo.vercel.app/" target="_blank" rel="noopener noreferrer">
               Studio MoshMo
             </a>
           </span>
