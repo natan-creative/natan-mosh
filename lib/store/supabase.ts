@@ -103,11 +103,12 @@ export const supabaseStore: StoreAdapter = {
   async updateMedia(id, patch) {
     if (patch.src && !patch.src.startsWith(SUPABASE_URL)) throw new Error("Invalid media URL");
     const sb = await supabaseServer();
-    const row: Record<string, unknown> = { ...patch };
+    // רק השדות שמותר לעדכן, גם אם הקריאה הגיעה עם שדות נוספים
+    const row: Record<string, unknown> = {};
+    for (const k of ["alt", "caption", "name", "mime", "size", "width", "height"] as const) if (patch[k] !== undefined) row[k] = patch[k];
     if (patch.src) {
       row.url = patch.src;
       row.path = storagePath(patch.src);
-      delete row.src;
     }
     fail((await sb.from("media").update(row).eq("id", id)).error);
   },

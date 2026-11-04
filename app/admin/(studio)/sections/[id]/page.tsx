@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { BLOCK_LABELS, emptyBlock, emptyCell, sectionAnchor, sectionKey } from "@/lib/content/blocks";
+import { BLOCK_LABELS, emptyBlock, emptyCell, GRID_TEMPLATES, sectionAnchor, sectionKey } from "@/lib/content/blocks";
 import { CUSTOM, RATIOS } from "@/lib/content/limits";
 import type { Align, Block, BlockKind, Cell, CustomSection } from "@/lib/content/types";
 import { MediaField } from "@/components/admin/MediaField";
@@ -133,6 +133,30 @@ export default function SectionEditor() {
           }
           options={[1, 2, 3, 4].map((n) => ({ value: n, label: String(n) }))}
         />
+        <div className="ad-field">
+          <span className="ad-label">תבנית גריד</span>
+          <div className="ad-group" role="group" aria-label="תבנית גריד">
+            {GRID_TEMPLATES.map((t) => {
+              const active = t.columns === s.columns && t.spans.every((n, i) => s.cells[i]?.span === n) && s.cells.length <= t.spans.length;
+              return (
+                <Button
+                  key={t.id}
+                  aria-pressed={active}
+                  variant={active ? "primary" : "secondary"}
+                  onClick={() =>
+                    up((x) => {
+                      x.columns = t.columns;
+                      x.cells.forEach((cl, i) => (cl.span = Math.min(t.spans[i] ?? 1, t.columns)));
+                    }, "grid")
+                  }
+                >
+                  {t.label}
+                </Button>
+              );
+            })}
+          </div>
+          <span className="ad-hint">שינוי תבנית לא מוחק תוכן. לביטול: Ctrl+Z (או Cmd+Z במק).</span>
+        </div>
         <SectionMap s={s} selected={cell?.id} onSelect={setSel} onAdd={s.cells.length < CUSTOM.cells ? addCell : undefined} />
         {cell && (
           <div className="ad-cell-bar">

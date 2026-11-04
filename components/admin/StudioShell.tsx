@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { logout } from "@/app/admin/actions";
 import { AREA_LABELS } from "@/lib/content/diff";
+import type { SiteContent } from "@/lib/content/types";
 import type { PreviewMessage } from "./PreviewApp";
 import { type Device, useStudio } from "./StudioContext";
 import { Button, useConfirm } from "./ui";
@@ -128,6 +129,14 @@ function PreviewPane() {
         }, `el.${id}`);
       }
       if (e.data?.type === "nk:select") setSelectedEl(e.data.id);
+      // סרגל הפעולות שבתצוגה המקדימה: עריכה פותחת את האלמנט ברשימה, הסתרה מחליפה מצב, איפוס מחזיר למקום הטבעי
+      if (e.data?.type === "nk:action") {
+        const { action, id } = e.data;
+        const k = id as keyof SiteContent["elements"];
+        if (action === "edit") setSelectedEl(id);
+        if (action === "hide") update((d) => void (d.elements[k] = { ...d.elements[k], hidden: !d.elements[k]?.hidden }), `el.${id}.hidden`);
+        if (action === "reset") update((d) => void delete d.elements[k], `el.${id}.reset`);
+      }
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);

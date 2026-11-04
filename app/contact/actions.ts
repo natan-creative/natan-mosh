@@ -21,7 +21,7 @@ export async function sendContact(_: ContactState, form: FormData): Promise<Cont
   if (mailConfigured()) {
     delivered = await sendMail({
       to: c.contact.email,
-      subject: `פנייה מהאתר: ${name}`,
+      subject: `פנייה מהאתר: ${name.replace(/[\r\n]+/g, " ")}`,
       text: `שם: ${name}\nמייל: ${email}\n\n${message}`,
       replyTo: email,
     });

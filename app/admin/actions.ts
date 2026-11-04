@@ -54,10 +54,15 @@ export async function login(_: unknown, form: FormData): Promise<{ error: string
   redirect("/admin");
 }
 
-/** כתובת האתר לקישור באיפוס סיסמה. בפרודקשן חובה NEXT_PUBLIC_SITE_URL, כדי שלא יהיה אפשר לשנות אותה מבחוץ */
+/**
+ * כתובת האתר לקישור באיפוס סיסמה. לא לוקחים אותה מה-Host של הבקשה (אפשר לזייף אותה ולקבל קישור לאתר זר).
+ * סדר: NEXT_PUBLIC_SITE_URL, ואז הדומיין הראשי של Vercel (משתנה שמוגדר אוטומטית בפרודקשן).
+ */
 async function siteOrigin(): Promise<string | null> {
   const env = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
   if (env) return env;
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(/\/+$/, "");
+  if (vercel) return `https://${vercel}`;
   if (process.env.NODE_ENV === "production") return null;
   const h = await headers();
   return `http://${h.get("host") ?? "localhost:3000"}`;

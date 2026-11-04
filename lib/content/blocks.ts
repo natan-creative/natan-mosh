@@ -32,7 +32,18 @@ export const emptySection = (id: string, name = "סקשן חדש"): CustomSectio
   cells: [],
 });
 
-export const SECTION_TEMPLATES: { id: string; label: string; hint: string; build: (id: Id) => CustomSection }[] = [
+/** תבניות גריד לסקשן: מספר עמודות, ורוחב כל חלק לפי הסדר. לא מוחקות תוכן, רק משנות רוחב */
+export const GRID_TEMPLATES: { id: string; label: string; columns: number; spans: number[] }[] = [
+  { id: "full", label: "מלא", columns: 1, spans: [1] },
+  { id: "two", label: "שניים שווים", columns: 2, spans: [1, 1] },
+  { id: "wide-narrow", label: "רחב וצר", columns: 3, spans: [2, 1] },
+  { id: "narrow-wide", label: "צר ורחב", columns: 3, spans: [1, 2] },
+  { id: "three", label: "שלושה שווים", columns: 3, spans: [1, 1, 1] },
+  { id: "four", label: "ארבעה שווים", columns: 4, spans: [1, 1, 1, 1] },
+  { id: "wide-two-narrow", label: "רחב ושני צרים", columns: 4, spans: [2, 1, 1] },
+];
+
+export const SECTION_TEMPLATES:{ id: string; label: string; hint: string; build: (id: Id) => CustomSection }[] = [
   {
     id: "side",
     label: "טקסט ותמונה זה לצד זה",

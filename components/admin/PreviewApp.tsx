@@ -14,7 +14,9 @@ export type PreviewMessage =
   // מצב עריכת מיקום: ה-Admin מדליק, ה-Preview מדווח על גרירה ובחירה
   | { type: "nk:edit"; enabled: boolean; selected: string | null }
   | { type: "nk:move"; id: string; x: number; y: number }
-  | { type: "nk:select"; id: string };
+  | { type: "nk:select"; id: string }
+  // סרגל הפעולות שמופיע במעבר עם העכבר: עריכה, הסתרה או איפוס מיקום
+  | { type: "nk:action"; action: "edit" | "hide" | "reset"; id: string };
 
 const OFFSET_X = 480;
 const OFFSET_Y = 360;
@@ -44,6 +46,8 @@ export function PreviewApp({ initial, embed, initialPath, revision }: { initial:
     const onClick = (e: MouseEvent) => {
       // במצב עריכה לחיצות לא מנווטות ולא מפעילות כפתורים
       if (document.documentElement.classList.contains("nk-edit")) {
+        // סרגל הפעולות מטפל בלחיצות שלו
+        if ((e.target as Element | null)?.closest?.("[data-bar]")) return;
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -116,6 +120,51 @@ export function PreviewApp({ initial, embed, initialPath, revision }: { initial:
       document.removeEventListener("pointerup", up);
     };
   }, [edit, version]);
+
+  // סרגל פעולות במעבר עם העכבר, במצב עריכה בלבד: עריכה, הסתרה, איפוס מיקום
+  useEffect(() => {
+    if (!edit.enabled) return;
+    const post = (m: PreviewMessage) => parent.postMessage(m, location.origin);
+    const bar = document.createElement("div");
+    bar.className = "nk-bar";
+    bar.setAttribute("data-bar", "");
+    bar.setAttribute("role", "toolbar");
+    bar.setAttribute("aria-label", "פעולות על האלמנט");
+    bar.hidden = true;
+    bar.innerHTML = `
+      <span title="גוררים את האלמנט עצמו כדי למקם אותו">גרירה</span>
+      <button type="button" data-action="edit">עריכה</button>
+      <button type="button" data-action="hide">הסתרה</button>
+      <button type="button" data-action="reset">איפוס מיקום</button>`;
+    document.body.appendChild(bar);
+
+    let current: HTMLElement | null = null;
+    const show = (el: HTMLElement) => {
+      current = el;
+      const r = el.getBoundingClientRect();
+      bar.style.top = `${Math.max(4, r.top + 4)}px`;
+      bar.style.left = `${Math.max(4, r.left + 4)}px`;
+      bar.hidden = false;
+    };
+    const onMove = (e: PointerEvent) => {
+      const t = e.target as Element | null;
+      if (t?.closest?.("[data-bar]")) return;
+      const el = t?.closest?.("[data-el]") as HTMLElement | null;
+      if (el) show(el);
+      else bar.hidden = true;
+    };
+    const onClick = (e: MouseEvent) => {
+      const b = (e.target as Element | null)?.closest?.("button[data-action]") as HTMLElement | null;
+      if (!b || !current?.dataset.el) return;
+      post({ type: "nk:action", action: b.dataset.action as "edit" | "hide" | "reset", id: current.dataset.el });
+    };
+    document.addEventListener("pointermove", onMove);
+    bar.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("pointermove", onMove);
+      bar.remove();
+    };
+  }, [edit.enabled]);
 
   useEffect(() => {
     if (hash) document.getElementById(hash)?.scrollIntoView({ block: "start" });

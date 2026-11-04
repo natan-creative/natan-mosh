@@ -30,6 +30,12 @@ const clamp = (n: unknown, min: number, max: number, fallback: number) => {
 
 const color = (v: string, fallback: string) => (HEX.test(v) ? v.toLowerCase() : fallback);
 
+/** קישורים: רק http(s), מייל, טלפון, נתיב פנימי או עוגן. מונע javascript: ודומיו בכפתורים ובמקומות אחרים */
+export const href = (v: unknown): string => {
+  const s = typeof v === "string" ? v.trim() : "";
+  return /^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i.test(s) ? s : "";
+};
+
 export const slugify = (s: string) =>
   s
     .toLowerCase()
@@ -81,7 +87,7 @@ function customSection(raw: CustomSection): CustomSection {
       .slice(0, CUSTOM.blocks)
       .map((rb): Block => {
         const b = merge(emptyBlock(String(rb.id), rb.kind), rb);
-        return { ...b, text: String(b.text), href: String(b.href), media: media(b.media), ratio: RATIOS.some((r) => r.value === b.ratio) ? b.ratio : "4/3", align: align(b.align) };
+        return { ...b, text: String(b.text), href: href(b.href), media: media(b.media), ratio: RATIOS.some((r) => r.value === b.ratio) ? b.ratio : "4/3", align: align(b.align) };
       });
     return { ...cell, span: Math.round(clamp(cell.span, 1, columns, 1)), dir: cell.dir === "row" ? "row" : "stack", valign: align(cell.valign), blocks };
   });
@@ -118,14 +124,17 @@ export function normalizeContent(raw: unknown): SiteContent {
       slug,
       cover: media(full.cover),
       logo: media(full.logo),
-      links: full.links.filter((l) => l && typeof l.href === "string"),
+      links: full.links.filter((l) => l && typeof l.href === "string").map((l) => ({ ...l, href: href(l.href) })),
       gallery: full.gallery.map((g) => ({ ...g, media: media(g.media)! })).filter((g) => g.media),
       stats: full.stats.filter((s) => typeof s === "string"),
       design: { ...full.design, accent: color(full.design.accent, "#111110") },
     };
   });
 
-  c.digital.items = c.digital.items.map((x) => ({ ...merge(emptyDigital(x.id), x), media: media(x.media) }));
+  c.digital.items = c.digital.items.map((x) => {
+    const item = merge(emptyDigital(x.id), x);
+    return { ...item, link: href(item.link), media: media(x.media) };
+  });
   c.naming.items = c.naming.items.map((x) => ({ ...merge(emptyName(x.id), x), image: media(x.image) }));
 
   c.digital.columns = {
@@ -174,6 +183,11 @@ export function normalizeContent(raw: unknown): SiteContent {
   }
   c.elements = els;
 
+  c.header.nav = c.header.nav.map((n) => ({ ...n, href: href(n.href) }));
+  c.footer.nav = c.footer.nav.map((n) => ({ ...n, href: href(n.href) }));
+  c.hero.cta = { ...c.hero.cta, href: href(c.hero.cta.href) };
+  c.contact.instagram = href(c.contact.instagram);
+  c.contact.linkedin = href(c.contact.linkedin);
   c.hero.image = media(c.hero.image);
   c.hero.video = media(c.hero.video);
   c.about.image = media(c.about.image);

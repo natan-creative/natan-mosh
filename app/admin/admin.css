@@ -118,10 +118,27 @@
 /* ---------- Login ---------- */
 
 .ad-login {
+  position: relative;
   display: grid;
   place-items: center;
   min-height: 100svh;
   padding: 24px;
+}
+
+/* יציאה מהכניסה לאתר. בפינה כדי לא לשבור את המרכוז של הכרטיס */
+.ad-login-exit {
+  position: absolute;
+  top: 16px;
+  inset-inline-start: 16px;
+  color: var(--a-muted);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.ad-login-exit:hover,
+.ad-login-exit:focus-visible {
+  color: var(--a-ink);
+  text-decoration: underline;
 }
 
 .ad-login-card {

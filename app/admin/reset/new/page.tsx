@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { supabaseServer } from "@/lib/supabase/server";
 import { BACKEND } from "@/lib/env";
 import { NewPasswordForm } from "@/components/admin/ResetForms";
+import { LoginExit } from "@/components/admin/LoginExit";
 
 // בלי session מקישור איפוס תקף: חוזרים לבקשת קישור חדש.
 // הבדיקה נעשית בתוך Suspense, כי היא קוראת קוקי של המשתמש ולא נבנית מראש.
@@ -20,6 +21,7 @@ export default function NewPasswordPage() {
       <Suspense fallback={null}>
         <Gate />
       </Suspense>
+      <LoginExit />
     </main>
   );
 }

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { getAdmin } from "@/lib/auth";
 import { BACKEND, LOCAL_ADMIN_ALLOWED } from "@/lib/env";
 import { LoginForm } from "@/components/admin/LoginForm";
+import { LoginExit } from "@/components/admin/LoginExit";
 
 async function Gate({ searchParams }: { searchParams: Promise<{ reset?: string }> }) {
   if (await getAdmin()) redirect("/admin");
@@ -17,6 +18,7 @@ export default function LoginPage({ searchParams }: { searchParams: Promise<{ re
       <Suspense fallback={null}>
         <Gate searchParams={searchParams} />
       </Suspense>
+      <LoginExit />
     </main>
   );
 }

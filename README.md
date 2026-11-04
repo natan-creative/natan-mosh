@@ -37,7 +37,7 @@
 - **שכחתי סיסמה:** נשלח מייל עם קישור. הקישור פותח טופס סיסמה חדשה (לפחות 10 תווים).
 - בשביל זה צריך להגדיר פעם אחת:
   1. Supabase → **Authentication → URL Configuration → Redirect URLs**: להוסיף `https://<הדומיין>/admin/reset/confirm`.
-  2. ב-Vercel → **Environment Variables**: `NEXT_PUBLIC_SITE_URL=https://<הדומיין>` (בלי / בסוף). בלי זה איפוס סיסמה לא עובד בפרודקשן.
+  2. ב-Vercel → **Environment Variables**: `NEXT_PUBLIC_SITE_URL=https://<הדומיין>` (בלי / בסוף). אם לא מוגדר, הקישור משתמש בדומיין הראשי של Vercel (`VERCEL_PROJECT_PRODUCTION_URL`), אז בדומיין מותאם אישית כדאי להגדיר אותו במפורש. הכתובת לא נלקחת מה-Host של הבקשה, כדי שלא אפשר לזייף אותה.
 
 ## פיתוח מקומי
 
