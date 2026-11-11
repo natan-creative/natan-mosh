@@ -10,7 +10,9 @@ import { describeChanges } from "@/lib/content/diff";
 import type { MediaAsset, SiteContent } from "@/lib/content/types";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CONTENT_TAG, getPublishedContent, store } from "@/lib/store";
-import { toE164 } from "@/lib/phone";
+import { isEmail, MOBILE_HINT, toE164 } from "@/lib/phone";
+
+const IDENTIFIER_ERROR = `צריך ${MOBILE_HINT}, או מייל תקין עם @.`;
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string };
 
@@ -34,7 +36,7 @@ function identifierOf(raw: string): { email: string } | { phone: string } | null
   const v = raw.trim();
   if (v.includes("@")) {
     const email = v.toLowerCase();
-    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) ? { email } : null;
+    return isEmail(email) ? { email } : null;
   }
   const phone = toE164(v);
   return phone ? { phone } : null;
@@ -45,7 +47,7 @@ export async function login(_: unknown, form: FormData): Promise<{ error: string
 
   if (BACKEND === "supabase") {
     const ident = identifierOf(String(form.get("identifier") ?? ""));
-    if (!ident) return { error: "צריך מספר טלפון או מייל תקין." };
+    if (!ident) return { error: IDENTIFIER_ERROR };
     const sb = await supabaseServer();
     const { error } = await sb.auth.signInWithPassword({ ...ident, password });
     if (error) {
@@ -115,7 +117,7 @@ export async function forgotPassword(_: unknown, form: FormData): Promise<Forgot
   }
 
   const ident = identifierOf(String(form.get("identifier") ?? ""));
-  if (!ident) return { error: "צריך מספר טלפון או מייל תקין." };
+  if (!ident) return { error: IDENTIFIER_ERROR };
   if ("email" in ident) {
     const origin = await siteOrigin();
     if (!origin) return { error: "חסרה ההגדרה NEXT_PUBLIC_SITE_URL בשרת." };

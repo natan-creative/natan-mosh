@@ -2,6 +2,7 @@
 
 import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
 import { Card, PageHeader, TextInput, Toggle } from "@/components/admin/ui";
+import { isEmail, isIsraeliMobile, MOBILE_HINT } from "@/lib/phone";
 
 export default function ContactEditor() {
   const { content: c, update } = useStudio();
@@ -16,7 +17,8 @@ export default function ContactEditor() {
       <Card title="פרטי הקשר באתר" hint="הטלפון הוא הדרך הראשית ליצור קשר. הכפתור הירוק (וואטסאפ) נשאר נפרד, למטה.">
         <TextInput label="כותרת" dir="ltr" value={c.contact.title} onChange={set("title")} />
         <TextInput label="משפט הזמנה" hint="לא חובה. למשל: יש בריף? בוא נחשוב עליו." value={c.contact.cta} onChange={set("cta")} />
-        <TextInput label="טלפון" hint="עם מקף או בלי, למשל 054-476-6060" dir="ltr" type="tel" value={c.contact.phone} onChange={set("phone")} />
+        <TextInput label="טלפון" hint={`${MOBILE_HINT}. אפשר עם מקפים לתצוגה, למשל 054-476-6060`} dir="ltr" type="tel" value={c.contact.phone} onChange={set("phone")} />
+        {c.contact.phone && !isIsraeliMobile(c.contact.phone) && <p className="ad-warning">המספר לא נראה תקין. {MOBILE_HINT}.</p>}
         <TextInput label="LinkedIn" dir="ltr" value={c.contact.linkedin} onChange={set("linkedin")} />
         <TextInput label="Instagram" dir="ltr" value={c.contact.instagram} onChange={set("instagram")} />
       </Card>
@@ -40,6 +42,7 @@ export default function ContactEditor() {
               value={c.contact.email}
               onChange={set("email")}
             />
+            {c.contact.email && !isEmail(c.contact.email) && <p className="ad-warning">המייל לא תקין. צריך להיות בפורמט name@domain.com.</p>}
           </>
         )}
       </Card>

@@ -1,13 +1,22 @@
+/** קידומות נייד ישראליות מותרות */
+export const MOBILE_PREFIXES = ["050", "052", "053", "054", "055", "058"] as const;
+
+/** לבדיקה בדפדפן (pattern של input): בדיוק 10 ספרות, מתחיל באחת הקידומות */
+export const MOBILE_PATTERN = "05[023458][0-9]{7}";
+
+export const MOBILE_HINT = `נייד ישראלי: 10 ספרות, מתחיל ב-${MOBILE_PREFIXES.join(", ")}`;
+
+/** האם זה נייד ישראלי תקין (מתעלמים ממקפים ורווחים) */
+export const isIsraeliMobile = (raw: string) => new RegExp(`^${MOBILE_PATTERN}$`).test(raw.replace(/[\s-]/g, ""));
+
 /**
- * המרת מספר טלפון שהוקלד לפורמט E.164 (+972...), כמו שסופבייס דורש.
- * מספר ישראלי שמתחיל ב-0 מקבל +972. מחזיר null אם המספר לא נראה תקין.
+ * נייד ישראלי (10 ספרות, 050/052/053/054/055/058) בפורמט E.164 (+9725...), כמו ש-Supabase דורש.
+ * כל דבר אחר (קווי, מספר זר, אורך שגוי) מחזיר null.
  */
 export function toE164(raw: string): string | null {
-  const cleaned = raw.trim().replace(/[\s\-().]/g, "");
-  let digits: string;
-  if (cleaned.startsWith("+")) digits = "+" + cleaned.slice(1).replace(/\D/g, "");
-  else if (cleaned.startsWith("00")) digits = "+" + cleaned.slice(2).replace(/\D/g, "");
-  else if (cleaned.startsWith("0")) digits = "+972" + cleaned.slice(1).replace(/\D/g, "");
-  else digits = "+" + cleaned.replace(/\D/g, "");
-  return /^\+\d{8,15}$/.test(digits) ? digits : null;
+  const digits = raw.replace(/[\s-]/g, "");
+  return isIsraeliMobile(digits) ? `+972${digits.slice(1)}` : null;
 }
+
+/** מייל תקין: משהו@דומיין.סיומת */
+export const isEmail = (raw: string) => /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(raw.trim());
