@@ -15,7 +15,6 @@ export default function SettingsEditor() {
       <PageHeader title="הגדרות" />
       <Card title="פרטים כלליים">
         <TextInput label="שם האתר" value={c.settings.siteTitle} onChange={(v) => update((d) => void (d.settings.siteTitle = v), "seo.title")} />
-        <TextInput label="מייל" type="email" dir="ltr" value={c.contact.email} onChange={(v) => update((d) => void (d.contact.email = v), "contact.email")} />
         <TextInput label="טלפון" dir="ltr" value={c.contact.phone} onChange={(v) => update((d) => void (d.contact.phone = v), "contact.phone")} />
         <p className="ad-hint">
           רשתות ווואטסאפ: ב<Link href="/admin/contact">יצירת קשר</Link>.

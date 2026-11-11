@@ -6,7 +6,7 @@ import { sendContact } from "@/app/contact/actions";
 
 type Props = { form: SiteContent["contact"]["form"]; el?: { "data-el": string; style: React.CSSProperties } };
 
-/** טופס קומפקטי: כותרת וטקסט מצד אחד, שורת שדות מהצד השני. ההודעה נשלחת למייל של נתן. */
+/** טופס קומפקטי: כותרת וטקסט מצד אחד, שורת שדות מהצד השני. ההודעה נשלחת למייל פנימי של נתן, והטלפון של הפונה נשמר איתה. */
 export function ContactForm({ form, el }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
@@ -38,15 +38,15 @@ export function ContactForm({ form, el }: Props) {
       ) : (
         <form className="cform-fields" onSubmit={onSubmit}>
           <label>
-            <span>שם</span>
+            <span>{form.nameLabel}</span>
             <input name="name" required maxLength={200} autoComplete="name" />
           </label>
           <label>
-            <span>מייל</span>
-            <input name="email" type="email" required maxLength={320} autoComplete="email" dir="ltr" />
+            <span>{form.phoneLabel}</span>
+            <input name="phone" type="tel" required maxLength={20} autoComplete="tel" dir="ltr" />
           </label>
           <label className="cform-message">
-            <span>מה על הפרק?</span>
+            <span>{form.messageLabel}</span>
             <textarea name="message" required maxLength={5000} rows={1} />
           </label>
           <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="cform-hp" />
@@ -55,7 +55,7 @@ export function ContactForm({ form, el }: Props) {
           </button>
           {status === "error" && (
             <p className="cform-status is-error" role="alert">
-              משהו לא עבד. אפשר לנסות שוב, או לשלוח מייל ישירות.
+              {form.errorText}
             </p>
           )}
         </form>

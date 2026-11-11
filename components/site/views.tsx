@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { SiteContent } from "@/lib/content/types";
-import { AboutContact, real, SiteFooter, tel } from "./AboutContact";
+import { AboutContact, SiteFooter, tel } from "./AboutContact";
 import { CustomSectionView } from "./CustomSection";
 import { DigitalGrid } from "./DigitalGrid";
 import { Hero } from "./Hero";
@@ -357,16 +357,6 @@ export function AccessibilityView({ c, updated }: { c: SiteContent; updated: str
                 <dd>
                   <a href={`tel:${tel(contact.phone)}`} className="latin">
                     {contact.phone}
-                  </a>
-                </dd>
-              </div>
-            )}
-            {real(contact.email) && (
-              <div>
-                <dt>מייל</dt>
-                <dd>
-                  <a href={`mailto:${contact.email}`} className="latin">
-                    {contact.email}
                   </a>
                 </dd>
               </div>

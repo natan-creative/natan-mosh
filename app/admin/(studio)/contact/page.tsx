@@ -7,14 +7,16 @@ export default function ContactEditor() {
   const { content: c, update } = useStudio();
   usePreviewPath("/#contact");
   const set = (k: "title" | "email" | "phone" | "linkedin" | "instagram" | "cta") => (v: string) => update((d) => void (d.contact[k] = v), `contact.${k}`);
+  const form = (k: "title" | "text" | "button" | "success" | "nameLabel" | "phoneLabel" | "messageLabel" | "errorText", label: string, hint?: string) => (
+    <TextInput label={label} hint={hint} value={c.contact.form[k]} onChange={(v) => update((d) => void (d.contact.form[k] = v), `form.${k}`)} />
+  );
   return (
     <>
       <PageHeader title="יצירת קשר" intro="פשוט וישיר." />
-      <Card>
+      <Card title="פרטי הקשר באתר" hint="הטלפון הוא הדרך הראשית ליצור קשר. הכפתור הירוק (וואטסאפ) נשאר נפרד, למטה.">
         <TextInput label="כותרת" dir="ltr" value={c.contact.title} onChange={set("title")} />
         <TextInput label="משפט הזמנה" hint="לא חובה. למשל: יש בריף? בוא נחשוב עליו." value={c.contact.cta} onChange={set("cta")} />
-        <TextInput label="מייל" type="email" dir="ltr" value={c.contact.email} onChange={set("email")} />
-        <TextInput label="טלפון" dir="ltr" value={c.contact.phone} onChange={set("phone")} />
+        <TextInput label="טלפון" hint="עם מקף או בלי, למשל 054-476-6060" dir="ltr" type="tel" value={c.contact.phone} onChange={set("phone")} />
         <TextInput label="LinkedIn" dir="ltr" value={c.contact.linkedin} onChange={set("linkedin")} />
         <TextInput label="Instagram" dir="ltr" value={c.contact.instagram} onChange={set("instagram")} />
       </Card>
@@ -22,10 +24,22 @@ export default function ContactEditor() {
         <Toggle label="להציג את הטופס" checked={c.contact.form.enabled} onChange={(v) => update((d) => void (d.contact.form.enabled = v))} />
         {c.contact.form.enabled && (
           <>
-            <TextInput label="כותרת" value={c.contact.form.title} onChange={(v) => update((d) => void (d.contact.form.title = v), "form.title")} />
-            <TextInput label="טקסט" hint="משפט קצר מתחת לכותרת. ריק = בלי טקסט." value={c.contact.form.text} onChange={(v) => update((d) => void (d.contact.form.text = v), "form.text")} />
-            <TextInput label="טקסט הכפתור" value={c.contact.form.button} onChange={(v) => update((d) => void (d.contact.form.button = v), "form.button")} />
-            <TextInput label="הודעה אחרי שליחה" value={c.contact.form.success} onChange={(v) => update((d) => void (d.contact.form.success = v), "form.success")} />
+            {form("title", "כותרת")}
+            {form("text", "טקסט", "משפט קצר מתחת לכותרת. ריק = בלי טקסט.")}
+            {form("nameLabel", "שדה שם")}
+            {form("phoneLabel", "שדה טלפון")}
+            {form("messageLabel", "שדה הודעה")}
+            {form("button", "טקסט הכפתור")}
+            {form("success", "הודעה אחרי שליחה")}
+            {form("errorText", "הודעת שגיאה", "מוצגת אם השליחה נכשלה.")}
+            <TextInput
+              label="מייל לקבלת הפניות"
+              hint="לא מוצג באתר. לכאן נשלחת כל הודעה מהטופס."
+              type="email"
+              dir="ltr"
+              value={c.contact.email}
+              onChange={set("email")}
+            />
           </>
         )}
       </Card>

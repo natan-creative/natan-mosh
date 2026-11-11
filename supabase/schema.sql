@@ -99,9 +99,13 @@ create table if not exists public.contact_messages (
   id bigint generated always as identity primary key,
   created_at timestamptz not null default now(),
   name text not null check (char_length(name) between 1 and 200),
-  email text not null check (char_length(email) between 3 and 320),
+  phone text check (char_length(phone) between 8 and 20),
+  email text check (char_length(email) between 3 and 320),
   message text not null check (char_length(message) between 1 and 5000)
 );
+-- לבסיסים קיימים (שנוצרו עם מייל): להוסיף טלפון, ולאפשר שאין מייל
+alter table public.contact_messages add column if not exists phone text check (char_length(phone) between 8 and 20);
+alter table public.contact_messages alter column email drop not null;
 alter table public.contact_messages enable row level security;
 
 -- מבקרים יכולים רק לשלוח. לקרוא: בדשבורד של Supabase, או admins.

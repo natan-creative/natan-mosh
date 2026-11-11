@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { assertAdmin, getAdmin, LOCAL_COOKIE, localToken, safeEqual } from "@/lib/auth";
@@ -10,6 +10,7 @@ import { describeChanges } from "@/lib/content/diff";
 import type { MediaAsset, SiteContent } from "@/lib/content/types";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CONTENT_TAG, getPublishedContent, store } from "@/lib/store";
+import { toE164 } from "@/lib/phone";
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string };
 
@@ -54,48 +55,42 @@ export async function login(_: unknown, form: FormData): Promise<{ error: string
   redirect("/admin");
 }
 
+export type ForgotResult = { step?: "code"; phone?: string; error?: string };
+
 /**
- * כתובת האתר לקישור באיפוס סיסמה. לא לוקחים אותה מה-Host של הבקשה (אפשר לזייף אותה ולקבל קישור לאתר זר).
- * סדר: NEXT_PUBLIC_SITE_URL, ואז הדומיין הראשי של Vercel (משתנה שמוגדר אוטומטית בפרודקשן).
+ * איפוס סיסמה ב-SMS, בשני שלבים באותו טופס:
+ * 1. intent=send: שולחים קוד חד-פעמי למספר. התשובה זהה בין אם המספר רשום ובין אם לא (לא חושפים מי רשום).
+ * 2. intent=reset: בודקים את הקוד, קובעים סיסמה חדשה, מתנתקים ומחזירים לכניסה.
  */
-async function siteOrigin(): Promise<string | null> {
-  const env = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
-  if (env) return env;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(/\/+$/, "");
-  if (vercel) return `https://${vercel}`;
-  if (process.env.NODE_ENV === "production") return null;
-  const h = await headers();
-  return `http://${h.get("host") ?? "localhost:3000"}`;
-}
-
-/** שליחת קישור לאיפוס סיסמה. התשובה זהה בין אם המייל רשום ובין אם לא */
-export async function forgotPassword(_: unknown, form: FormData): Promise<{ sent?: true; error?: string } | undefined> {
+export async function forgotPassword(_: unknown, form: FormData): Promise<ForgotResult | undefined> {
   if (BACKEND !== "supabase") return { error: "איפוס סיסמה זמין רק כשהסטודיו מחובר ל-Supabase." };
-  const email = String(form.get("email") ?? "").trim().toLowerCase();
-  if (!email) return { error: "צריך למלא מייל." };
-  const origin = await siteOrigin();
-  if (!origin) return { error: "חסרה ההגדרה NEXT_PUBLIC_SITE_URL בשרת." };
+  const intent = String(form.get("intent") ?? "send");
   const sb = await supabaseServer();
-  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/admin/reset/confirm` });
-  if (error?.status === 429) return { error: "יותר מדי בקשות. כדאי לחכות כמה דקות." };
-  if (error) console.warn("[admin] reset failed:", error.code ?? error.message);
-  return { sent: true };
-}
 
-/** קביעת סיסמה חדשה אחרי שהמשתמש פתח את קישור האיפוס (ה-session נוצר ב-/admin/reset/confirm) */
-export async function setNewPassword(_: unknown, form: FormData): Promise<{ error: string } | undefined> {
-  const password = String(form.get("password") ?? "");
-  const again = String(form.get("again") ?? "");
-  if (password.length < 10) return { error: "הסיסמה צריכה להיות לפחות 10 תווים." };
-  if (password !== again) return { error: "שתי הסיסמאות לא זהות." };
-  const sb = await supabaseServer();
-  const { data } = await sb.auth.getUser();
-  if (!data.user) return { error: "הקישור פג תוקף או שכבר נוצל. כדאי לבקש קישור חדש." };
-  const { error } = await sb.auth.updateUser({ password });
-  if (error) return { error: "לא הצלחנו לשמור את הסיסמה. נסה שוב." };
-  // מתנתקים, ומתחברים מחדש עם הסיסמה החדשה
-  await sb.auth.signOut();
-  redirect("/admin/login?reset=1");
+  if (intent === "reset") {
+    const phone = toE164(String(form.get("phone") ?? ""));
+    const code = String(form.get("code") ?? "").replace(/\s/g, "");
+    const password = String(form.get("password") ?? "");
+    const again = String(form.get("again") ?? "");
+    if (!phone) return { error: "מספר הטלפון לא תקין. כדאי להתחיל מחדש." };
+    if (password.length < 10) return { step: "code", phone, error: "הסיסמה צריכה להיות לפחות 10 תווים." };
+    if (password !== again) return { step: "code", phone, error: "שתי הסיסמאות לא זהות." };
+    const { error: otpError } = await sb.auth.verifyOtp({ phone, token: code, type: "sms" });
+    if (otpError) return { step: "code", phone, error: "הקוד לא נכון או שפג תוקפו. אפשר לשלוח קוד חדש." };
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) return { step: "code", phone, error: "לא הצלחנו לשמור את הסיסמה. נסה שוב." };
+    // מתנתקים, ומתחברים מחדש עם הסיסמה החדשה
+    await sb.auth.signOut();
+    redirect("/admin/login?reset=1");
+  }
+
+  const phone = toE164(String(form.get("phone") ?? ""));
+  if (!phone) return { error: "מספר הטלפון לא תקין. לדוגמה 054-1234567." };
+  // shouldCreateUser: false, כדי שמספר זר לא ייצור משתמש חדש
+  const { error } = await sb.auth.signInWithOtp({ phone, options: { shouldCreateUser: false } });
+  if (error?.status === 429) return { error: "יותר מדי בקשות. כדאי לחכות כמה דקות." };
+  if (error) console.warn("[admin] otp send failed:", error.code ?? error.message);
+  return { step: "code", phone };
 }
 
 /** שינוי סיסמה מתוך הסטודיו. דורש את הסיסמה הנוכחית, כדי שמי שנשאר פתוח על מחשב אחר לא יוכל לשנות אותה */
@@ -110,8 +105,15 @@ export async function changePassword(_: unknown, form: FormData): Promise<{ ok?:
   if (next !== again) return { error: "שתי הסיסמאות החדשות לא זהות." };
   const sb = await supabaseServer();
   const { data } = await sb.auth.getUser();
-  if (!data.user?.email) return { error: "צריך להתחבר מחדש." };
-  const check = await sb.auth.signInWithPassword({ email: data.user.email, password: current });
+  if (!data.user) return { error: "צריך להתחבר מחדש." };
+  // בודקים את הסיסמה הנוכחית לפי הזיהוי של המשתמש: טלפון (הרגיל עכשיו) או מייל (משתמשים ישנים)
+  const identity = data.user.phone
+    ? { phone: data.user.phone.startsWith("+") ? data.user.phone : `+${data.user.phone}` }
+    : data.user.email
+      ? { email: data.user.email }
+      : null;
+  if (!identity) return { error: "צריך להתחבר מחדש." };
+  const check = await sb.auth.signInWithPassword({ ...identity, password: current });
   if (check.error) return { error: "הסיסמה הנוכחית לא נכונה." };
   const { error } = await sb.auth.updateUser({ password: next });
   if (error) return { error: "לא הצלחנו לשמור את הסיסמה. נסה שוב." };

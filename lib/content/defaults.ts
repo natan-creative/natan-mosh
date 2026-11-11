@@ -354,6 +354,10 @@ export const defaultContent: SiteContent = {
       text: "כמה מילים על מה שצריך, ואחזור אליך בהקדם.",
       button: "שליחה",
       success: "ההודעה נשלחה. אחזור אליך בקרוב.",
+      nameLabel: "שם",
+      phoneLabel: "טלפון",
+      messageLabel: "מה על הפרק?",
+      errorText: "משהו לא עבד. אפשר לנסות שוב, או להתקשר ישירות.",
     },
   },
   footer: {

@@ -268,13 +268,24 @@ export type SiteContent = {
   about: { title: string; body: string; quote: string; image: MediaRef | null };
   contact: {
     title: string;
+    /** מייל פנימי: לאן נשלחות ההודעות מהטופס. לא מוצג באתר */
     email: string;
     phone: string;
     linkedin: string;
     instagram: string;
     cta: string;
     whatsapp: { enabled: boolean; number: string; message: string };
-    form: { enabled: boolean; title: string; text: string; button: string; success: string };
+    form: {
+      enabled: boolean;
+      title: string;
+      text: string;
+      button: string;
+      success: string;
+      nameLabel: string;
+      phoneLabel: string;
+      messageLabel: string;
+      errorText: string;
+    };
   };
   footer: {
     copyright: string;

@@ -57,9 +57,11 @@ export function AboutContact({ c, showAbout = true, showContact = true, withFoot
             <div id="contact" className="ac-contact" data-reveal="up" suppressHydrationWarning {...el(c.elements, "contact.block")}>
               <h2 className="section-title latin">{contact.title}</h2>
               {contact.cta && <p className="ac-cta">{contact.cta}</p>}
-              <a href={`mailto:${contact.email}`} className="ac-mail latin">
-                {contact.email}
-              </a>
+              {contact.phone && (
+                <a href={`tel:${tel(contact.phone)}`} className="ac-mail latin">
+                  {contact.phone}
+                </a>
+              )}
               <div className="ac-row">
                 <div className="ac-social">
                   {contact.instagram && (
@@ -72,15 +74,12 @@ export function AboutContact({ c, showAbout = true, showContact = true, withFoot
                       <LinkedIn />
                     </a>
                   )}
-                  {contact.phone && (
-                    <a href={`tel:${tel(contact.phone)}`} className="ac-phone latin">
-                      {contact.phone}
-                    </a>
-                  )}
                 </div>
-                <a href={`mailto:${contact.email}`} className="ac-arrow" aria-label="שליחת מייל">
-                  ←
-                </a>
+                {contact.phone && (
+                  <a href={`tel:${tel(contact.phone)}`} className="ac-arrow" aria-label="התקשרות">
+                    ←
+                  </a>
+                )}
               </div>
             </div>
           )}
