@@ -2252,6 +2252,19 @@ html.a11y-still::view-transition-new(*) {
   color: var(--muted);
 }
 
+/* מונה התווים בשדה ההודעה */
+.cform-count {
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+/* הכפתור כבוי עד שכל השדות מלאים ותקינים */
+.cform-fields .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .cform-fields input,
 .cform-fields textarea {
   font: inherit;

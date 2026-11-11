@@ -1,14 +1,14 @@
 "use client";
 
 import { usePreviewPath, useStudio } from "@/components/admin/StudioContext";
-import { Card, PageHeader, TextInput, Toggle } from "@/components/admin/ui";
+import { Card, PageHeader, Select, TextInput, Toggle } from "@/components/admin/ui";
 import { isEmail, isIsraeliMobile, MOBILE_HINT } from "@/lib/phone";
 
 export default function ContactEditor() {
   const { content: c, update } = useStudio();
   usePreviewPath("/#contact");
   const set = (k: "title" | "email" | "phone" | "linkedin" | "instagram" | "cta") => (v: string) => update((d) => void (d.contact[k] = v), `contact.${k}`);
-  const form = (k: "title" | "text" | "button" | "success" | "nameLabel" | "phoneLabel" | "messageLabel" | "errorText", label: string, hint?: string) => (
+  const form = (k: "title" | "text" | "button" | "success" | "nameLabel" | "phoneLabel" | "emailLabel" | "messageLabel" | "errorText", label: string, hint?: string) => (
     <TextInput label={label} hint={hint} value={c.contact.form[k]} onChange={(v) => update((d) => void (d.contact.form[k] = v), `form.${k}`)} />
   );
   return (
@@ -29,7 +29,17 @@ export default function ContactEditor() {
             {form("title", "כותרת")}
             {form("text", "טקסט", "משפט קצר מתחת לכותרת. ריק = בלי טקסט.")}
             {form("nameLabel", "שדה שם")}
-            {form("phoneLabel", "שדה טלפון")}
+            <Select
+              label="איך הפונה משאיר פרטים"
+              hint="השדה השני בטופס: טלפון (נייד ישראלי, 10 ספרות) או מייל."
+              value={c.contact.form.contactField}
+              onChange={(v) => update((d) => void (d.contact.form.contactField = v), "form.contactField")}
+              options={[
+                { value: "phone", label: "טלפון" },
+                { value: "email", label: "מייל" },
+              ]}
+            />
+            {c.contact.form.contactField === "email" ? form("emailLabel", "שדה מייל") : form("phoneLabel", "שדה טלפון")}
             {form("messageLabel", "שדה הודעה")}
             {form("button", "טקסט הכפתור")}
             {form("success", "הודעה אחרי שליחה")}

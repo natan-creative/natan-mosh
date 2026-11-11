@@ -18,5 +18,8 @@ export function toE164(raw: string): string | null {
   return isIsraeliMobile(digits) ? `+972${digits.slice(1)}` : null;
 }
 
+/** אורך מקסימלי להודעה בטופס יצירת הקשר */
+export const CONTACT_MESSAGE_MAX = 150;
+
 /** מייל תקין: משהו@דומיין.סיומת */
 export const isEmail = (raw: string) => /^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(raw.trim());

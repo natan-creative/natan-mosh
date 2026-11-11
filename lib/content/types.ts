@@ -282,7 +282,10 @@ export type SiteContent = {
       button: string;
       success: string;
       nameLabel: string;
+      /** איזה פרט מבקשים מהפונה: טלפון או מייל */
+      contactField: "phone" | "email";
       phoneLabel: string;
+      emailLabel: string;
       messageLabel: string;
       errorText: string;
     };

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { SiteContent } from "@/lib/content/types";
 import { sendContact } from "@/app/contact/actions";
-import { MOBILE_HINT, MOBILE_PATTERN } from "@/lib/phone";
+import { CONTACT_MESSAGE_MAX, MOBILE_HINT, MOBILE_PATTERN } from "@/lib/phone";
 
 type Props = { form: SiteContent["contact"]["form"]; el?: { "data-el": string; style: React.CSSProperties } };
 
@@ -12,6 +12,9 @@ export function ContactForm({ form, el }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   // שגיאת שדה (מוצגת כמו שהיא) או קוד כישלון שליחה (מוצג בטקסט מהניהול, והקוד נשמר ב-data-code לאבחון)
   const [error, setError] = useState<{ text: string; code?: string } | null>(null);
+  // הכפתור פעיל רק כשכל השדות מלאים ותקינים
+  const [canSend, setCanSend] = useState(false);
+  const [chars, setChars] = useState(0);
 
   if (!form.enabled) return null;
 
@@ -52,35 +55,47 @@ export function ContactForm({ form, el }: Props) {
           {form.success}
         </p>
       ) : (
-        <form className="cform-fields" onSubmit={onSubmit}>
+        <form className="cform-fields" onSubmit={onSubmit} onInput={(e) => setCanSend(e.currentTarget.checkValidity())}>
           <label>
             <span>{form.nameLabel}</span>
             <input name="name" required maxLength={200} autoComplete="name" />
           </label>
-          <label>
-            <span>{form.phoneLabel}</span>
-            <input
-              name="phone"
-              type="tel"
-              inputMode="numeric"
-              required
-              minLength={10}
-              maxLength={10}
-              pattern={MOBILE_PATTERN}
-              title={MOBILE_HINT}
-              placeholder="05XXXXXXXX"
-              autoComplete="tel-national"
-              dir="ltr"
-              onInvalid={phoneValidity}
-              onInput={phoneValidity}
-            />
-          </label>
+          {form.contactField === "email" ? (
+            <label>
+              <span>{form.emailLabel}</span>
+              <input name="email" type="email" required maxLength={320} autoComplete="email" placeholder="name@example.com" dir="ltr" />
+            </label>
+          ) : (
+            <label>
+              <span>{form.phoneLabel}</span>
+              <input
+                name="phone"
+                type="tel"
+                inputMode="numeric"
+                required
+                minLength={10}
+                maxLength={10}
+                pattern={MOBILE_PATTERN}
+                title={MOBILE_HINT}
+                placeholder="05XXXXXXXX"
+                autoComplete="tel-national"
+                dir="ltr"
+                onInvalid={phoneValidity}
+                onInput={phoneValidity}
+              />
+            </label>
+          )}
           <label className="cform-message">
-            <span>{form.messageLabel}</span>
-            <textarea name="message" required maxLength={5000} rows={1} />
+            <span>
+              {form.messageLabel}{" "}
+              <small className="cform-count" aria-live="polite">
+                {chars}/{CONTACT_MESSAGE_MAX}
+              </small>
+            </span>
+            <textarea name="message" required maxLength={CONTACT_MESSAGE_MAX} rows={1} onInput={(e) => setChars(e.currentTarget.value.length)} />
           </label>
           <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="cform-hp" />
-          <button type="submit" className="btn btn-primary" disabled={status === "sending"}>
+          <button type="submit" className="btn btn-primary" disabled={status === "sending" || !canSend}>
             {status === "sending" ? "שולח…" : form.button}
           </button>
           {status === "error" && error && (

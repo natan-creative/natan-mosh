@@ -188,6 +188,7 @@ export function normalizeContent(raw: unknown): SiteContent {
   c.hero.cta = { ...c.hero.cta, href: href(c.hero.cta.href) };
   c.contact.instagram = href(c.contact.instagram);
   c.contact.linkedin = href(c.contact.linkedin);
+  if (c.contact.form.contactField !== "email") c.contact.form.contactField = "phone";
   c.hero.image = media(c.hero.image);
   c.hero.video = media(c.hero.video);
   c.about.image = media(c.about.image);
