@@ -1,12 +1,16 @@
 "use server";
 
-import { mailConfigured, sendMail } from "@/lib/mail";
+import { mailRecipient, sendMail } from "@/lib/mail";
 import { toE164 } from "@/lib/phone";
 import { getPublishedContent } from "@/lib/store";
 
 export type ContactState = { ok?: true; error?: string } | undefined;
 
-/** טופס יצירת הקשר: שולח מייל פנימי לנתן, ושומר גיבוי בטבלת contact_messages (אם Supabase מחובר) */
+/**
+ * טופס יצירת הקשר: שולח מייל לנתן דרך Resend, ושומר גיבוי בטבלת contact_messages (אם Supabase מחובר).
+ * אישור למבקר רק אם המייל נשלח בפועל. שמירה בלבד לא נחשבת הצלחה, כי אף אחד לא יראה אותה.
+ * בלוג נרשמת סיבת הכישלון בלבד: בלי מפתחות, ובלי השם, הטלפון או תוכן הפנייה.
+ */
 export async function sendContact(_: ContactState, form: FormData): Promise<ContactState> {
   // שדה מלכודת: בוטים ממלאים אותו, בני אדם לא רואים אותו
   if (String(form.get("website") ?? "")) return { ok: true };
@@ -16,14 +20,12 @@ export async function sendContact(_: ContactState, form: FormData): Promise<Cont
   if (!name || !message || !phone) return { error: "צריך למלא שם, טלפון תקין והודעה." };
 
   const c = await getPublishedContent();
-  let delivered = false;
-  if (mailConfigured() && c.contact.email) {
-    delivered = await sendMail({
-      to: c.contact.email,
-      subject: `פנייה מהאתר: ${name.replace(/[\r\n]+/g, " ")}`,
-      text: `שם: ${name}\nטלפון: ${phone}\n\n${message}`,
-    });
-  }
+  const mail = await sendMail({
+    to: mailRecipient(c.contact.email),
+    subject: `פנייה מהאתר: ${name.replace(/[\r\n]+/g, " ")}`,
+    text: `שם: ${name}\nטלפון: ${phone}\n\n${message}`,
+  });
+  if (!mail.ok) console.error("[contact] mail not sent:", mail.reason);
 
   let saved = false;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,9 +38,15 @@ export async function sendContact(_: ContactState, form: FormData): Promise<Cont
         body: JSON.stringify({ name, phone, message }),
       });
       saved = res.ok;
-    } catch {}
+      if (!res.ok) console.error("[contact] backup save failed:", res.status);
+    } catch (e) {
+      console.error("[contact] backup save error:", e instanceof Error ? e.message : "unknown");
+    }
   }
 
-  if (!delivered && !saved) return { error: "משהו לא עבד. אפשר לנסות שוב, או להתקשר ישירות." };
+  if (!mail.ok) {
+    if (saved) console.warn("[contact] message saved in Supabase only; email was not delivered");
+    return { error: "השליחה נכשלה." };
+  }
   return { ok: true };
 }

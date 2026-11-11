@@ -34,7 +34,7 @@ export default function ContactEditor() {
             {form("errorText", "הודעת שגיאה", "מוצגת אם השליחה נכשלה.")}
             <TextInput
               label="מייל לקבלת הפניות"
-              hint="לא מוצג באתר. לכאן נשלחת כל הודעה מהטופס."
+              hint="לא מוצג באתר. לכאן נשלחת כל הודעה מהטופס, אלא אם הוגדר CONTACT_EMAIL_TO בשרת (הוא גובר)."
               type="email"
               dir="ltr"
               value={c.contact.email}
