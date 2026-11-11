@@ -23,10 +23,10 @@ export function LoginForm({ mode, resetDone }: { mode: "supabase" | "local" | "u
       {resetDone && <p className="ad-notice">הסיסמה עודכנה. אפשר להתחבר.</p>}
       {mode === "supabase" && (
         <>
-          <label className="ad-label" htmlFor="login-phone">
-            מספר טלפון
+          <label className="ad-label" htmlFor="login-identifier">
+            טלפון או מייל
           </label>
-          <input id="login-phone" name="phone" type="tel" autoComplete="tel" dir="ltr" required className="ad-input" />
+          <input id="login-identifier" name="identifier" type="text" autoComplete="username" dir="ltr" required className="ad-input" />
         </>
       )}
       <label className="ad-label" htmlFor="login-password">
